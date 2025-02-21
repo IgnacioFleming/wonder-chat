@@ -24,6 +24,8 @@
   "type": "module",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "mongoose": "^8.10.1"
+    "express-handlebars": "^8.0.1",
+    "mongoose": "^8.10.1",
+    "socket.io": "^4.8.1"
   }
 }
