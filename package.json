@@ -12,21 +12,21 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@eslint/js": "^9.20.0",
-    "@types/express": "^5.0.0",
-    "eslint": "^9.20.1",
-    "express": "^4.21.2",
-    "globals": "^16.0.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.1"
+    "@eslint/js": "9.20.0",
+    "@types/express": "5.0.0",
+    "eslint": "9.20.1",
+    "express": "4.21.2",
+    "globals": "16.0.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.3",
+    "typescript-eslint": "8.24.1"
   },
   "type": "module",
   "dependencies": {
-    "dotenv": "^16.4.7",
-    "express-handlebars": "^8.0.1",
-    "mongoose": "^8.10.1",
-    "socket.io": "^4.8.1",
-    "zod": "^3.24.2"
+    "dotenv": "16.4.7",
+    "express-handlebars": "8.0.1",
+    "mongoose": "8.10.1",
+    "socket.io": "4.8.1",
+    "zod": "3.24.2"
   }
 }
