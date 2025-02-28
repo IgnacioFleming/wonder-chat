@@ -25,19 +25,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  messages: [
-    {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: "messages",
-    },
-  ],
   signup_date: {
     type: String,
-    default: new Date(),
+    default: Date(),
   },
   last_connection: {
     type: String,
-    default: new Date(),
+    default: Date(),
   },
   is_online: Boolean,
 });
