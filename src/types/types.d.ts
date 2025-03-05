@@ -21,3 +21,12 @@ export type User = {
   last_connection?: typeof Date;
   is_online?: boolean;
 };
+
+export type Message = {
+  author: ObjectId;
+  content: string;
+  receiver: ObjectId;
+  date?: typeof Date;
+  isSent?: boolean;
+  isRead?: boolean;
+};

@@ -1,9 +1,15 @@
 import { Server } from "socket.io";
-import type http from "http";
+import http from "http";
 
 export default class MessageService {
   private socketServer;
-  constructor(server: http.Server) {
-    this.socketServer = new Server(server);
+  server = http.createServer();
+  constructor() {
+    this.socketServer = new Server(this.server);
+  }
+  async enable(): Promise<void> {
+    this.socketServer.on("connection", () => {
+      console.log("Connection ON");
+    });
   }
 }
