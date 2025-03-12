@@ -5,6 +5,7 @@ const messagesCollection = "messages";
 const messageSchema = new mongoose.Schema({
   author: {
     type: mongoose.Types.ObjectId,
+    ref: "users",
     required: true,
   },
   content: {
@@ -13,6 +14,7 @@ const messageSchema = new mongoose.Schema({
   },
   receiver: {
     type: mongoose.Types.ObjectId,
+    ref: "users",
     required: true,
   },
   date: {

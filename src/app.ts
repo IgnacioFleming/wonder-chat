@@ -2,12 +2,13 @@ import express from "express";
 import mongoose from "mongoose";
 import usersRouter from "./routes/users.ts";
 import { createCustomError } from "./middleware/error.ts";
-import MessageService from "./websockets/MessageService.ts";
+import MessageService from "./sockets/SocketManager.ts";
 import { engine } from "express-handlebars";
 import { __dirname } from "./utils/utils.ts";
 import viewsRouter from "./routes/views.ts";
 import { createServer } from "node:http";
 import config from "./config/config.ts";
+import SocketManager from "./sockets/SocketManager.ts";
 
 const app = express();
 export const server = createServer(app);
@@ -24,5 +25,5 @@ app.use("/api/users", usersRouter);
 app.use(viewsRouter);
 app.use(createCustomError);
 
-const messageService = new MessageService(server);
-messageService.enable();
+const socket = new SocketManager(server);
+socket.connect();
