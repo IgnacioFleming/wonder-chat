@@ -1,28 +1,21 @@
 import express from "express";
 import mongoose from "mongoose";
-import config from "./config/config.ts";
-import usersRouter from "./routes/users.ts";
-import { createCustomError } from "./middleware/error.ts";
-import MessageService from "./websockets/MessageService.ts";
+import config from "./config/config.js";
+import usersRouter from "./routes/users.js";
+import { createCustomError } from "./middleware/error.js";
+import MessageService from "./websockets/MessageService.js";
 import { engine } from "express-handlebars";
-import { __dirname } from "./utils/utils.ts";
-import viewsRouter from "./routes/views.ts";
-
+import { __dirname } from "./utils/utils.js";
+import viewsRouter from "./routes/views.js";
 export const app = express();
-
 mongoose.connect(config.mongo_url_dev);
-
 app.use(express.json());
 app.use(express.static(__dirname + "/dist/public"));
-
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/dist/views");
-
 app.use("/api/users", usersRouter);
 app.use(viewsRouter);
-
 app.use(createCustomError);
-
 const messageService = new MessageService();
 messageService.enable();
