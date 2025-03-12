@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-import config from "./config/config.js";
 import usersRouter from "./routes/users.js";
 import { createCustomError } from "./middleware/error.js";
 import MessageService from "./websockets/MessageService.js";
@@ -8,6 +7,7 @@ import { engine } from "express-handlebars";
 import { __dirname } from "./utils/utils.js";
 import viewsRouter from "./routes/views.js";
 import { createServer } from "node:http";
+import config from "./config/config.js";
 const app = express();
 export const server = createServer(app);
 mongoose.connect(config.mongo_url_dev);

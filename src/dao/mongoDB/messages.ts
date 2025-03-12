@@ -12,11 +12,19 @@ export default class MessageDAO {
       throw error;
     }
   }
-  static async getbyId(id: string) {
+  static async getById(id: string) {
     try {
       const message = await messageModel.findById(id);
       if (!message?.id) return { status: STATUS_TYPES.NOT_FOUND, error: "Message not found." };
       return { status: STATUS_TYPES.SUCCESS, payload: message };
+    } catch (error) {
+      throw error;
+    }
+  }
+  static async getUserMessagesById(id: string) {
+    try {
+      const messages = await messageModel.find({ receiver: id });
+      return { status: STATUS_TYPES.SUCCESS, payload: messages };
     } catch (error) {
       throw error;
     }

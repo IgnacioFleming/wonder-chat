@@ -2,7 +2,7 @@ import { Errback, ErrorRequestHandler, NextFunction, Request, Response } from "e
 import mongoose from "mongoose";
 import { STATUS_TYPES } from "../utils/status.ts";
 
-export type ObjectId = typeof mongoose.SchemaTypes.ObjectId;
+export type ObjectId = mongoose.Types.ObjectId;
 
 export type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 

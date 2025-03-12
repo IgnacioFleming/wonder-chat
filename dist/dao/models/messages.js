@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const messagesCollection = "messages";
 const messageSchema = new mongoose.Schema({
     author: {
-        type: mongoose.SchemaTypes.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
     },
     content: {
@@ -10,7 +10,7 @@ const messageSchema = new mongoose.Schema({
         required: true,
     },
     receiver: {
-        type: mongoose.SchemaTypes.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
     },
     date: {

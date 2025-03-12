@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-import config from "./config/config.ts";
 import usersRouter from "./routes/users.ts";
 import { createCustomError } from "./middleware/error.ts";
 import MessageService from "./websockets/MessageService.ts";
@@ -8,6 +7,7 @@ import { engine } from "express-handlebars";
 import { __dirname } from "./utils/utils.ts";
 import viewsRouter from "./routes/views.ts";
 import { createServer } from "node:http";
+import config from "./config/config.ts";
 
 const app = express();
 export const server = createServer(app);
