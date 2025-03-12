@@ -1,3 +1,3 @@
-import { app } from "./app.js";
+import { server } from "./app.js";
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log("Server ON"));
+server.listen(PORT, () => console.log("Server ON"));

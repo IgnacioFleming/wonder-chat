@@ -1,5 +1,5 @@
-import { app } from "./app.ts";
+import { server } from "./app.ts";
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => console.log("Server ON"));
+server.listen(PORT, () => console.log("Server ON"));

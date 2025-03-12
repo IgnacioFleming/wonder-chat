@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && xcopy src\\public\\css dist\\public\\css /E /I /Y && xcopy src\\views dist\\views /E /I /Y",
+    "copyFiles": "xcopy src\\public\\css dist\\public\\css /E /I /Y && xcopy src\\views dist\\views /E /I /Y",
+    "build": "tsc && npm run copyFiles",
     "lint": "npx eslint",
-    "dev": "node --watch --loader ts-node/esm src/index.ts",
+    "watch": "tsc --watch & node --watch src/public --exec \"xcopy src\\public\\css dist\\public\\css /E /I /Y && xcopy src\\views dist\\views /E /I /Y\"",
+    "dev": "concurrently -k -n \"BUILD,SERVER\" -c \"blue,green\" \"npm run watch\" \"node --watch --loader ts-node/esm src/index.ts\"",
     "start": "node dist/index.js"
   },
   "author": "Ignacio Fleming",
@@ -14,6 +16,7 @@
   "devDependencies": {
     "@eslint/js": "9.20.0",
     "@types/express": "5.0.0",
+    "concurrently": "9.1.2",
     "eslint": "9.20.1",
     "globals": "16.0.0",
     "ts-node": "10.9.2",
