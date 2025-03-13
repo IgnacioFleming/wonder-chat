@@ -6,3 +6,8 @@
   --main-nude: #e6e6e5;
   --main-black: #000;
 }
+
+#root {
+  background-color: var(--main-nude);
+  width: 100%;
+}
