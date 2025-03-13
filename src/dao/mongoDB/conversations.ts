@@ -20,10 +20,7 @@ export default class ConversationDAO {
     return { status: "success", payload: newConversation };
   }
   static async replaceLastMessage(participants: ObjectId[], lastMessage: LastMessage) {
-    console.log("last message is ");
-    console.log("and it ends here");
     const { success, data, error } = conversationSchema.safeParse({ participants, lastMessage });
-    console.log(error);
     if (!success) return { status: "error", error };
     const newLastConversation = await conversationModel.updateOne({ participants: { $all: data.participants } }, { $set: { lastMessage: data.lastMessage } });
     return { status: "success", payload: newLastConversation };
