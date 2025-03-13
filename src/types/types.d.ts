@@ -10,7 +10,7 @@ export type Response = (res: Response, payload?: Object, error?: string | { name
 
 export type ErrorMiddleware = (err: Errback, req: Request, res: Response, next?: NextFunction) => void;
 
-export type User = {
+export interface User {
   username: string;
   first_name: string;
   last_name: string;
@@ -20,13 +20,20 @@ export type User = {
   signup_date?: typeof Date;
   last_connection?: typeof Date;
   is_online?: boolean;
-};
+}
 
-export type Message = {
+export interface Message {
   author: ObjectId;
   content: string;
   receiver: ObjectId;
   date?: typeof Date;
   isSent?: boolean;
   isRead?: boolean;
-};
+}
+
+type LastMessage = Omit<Message, "isSent" | "receiver">;
+
+export interface Conversation {
+  participants: ObjectId[];
+  lastMessage: LastMessage;
+}

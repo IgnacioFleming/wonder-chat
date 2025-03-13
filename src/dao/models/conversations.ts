@@ -7,7 +7,10 @@ const conversationSchema = new mongoose.Schema({
   lastMessage: {
     content: String,
     author: { type: mongoose.Types.ObjectId, ref: "users" },
-    date: Date,
+    date: {
+      type: Date,
+      default: Date(),
+    },
     isRead: {
       type: Boolean,
       default: false,
