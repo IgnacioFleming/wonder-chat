@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "copyFiles": "xcopy src\\public\\css dist\\public\\css /E /I /Y && xcopy src\\views dist\\views /E /I /Y",
+    "copyFiles": "xcopy src\\public dist\\public /E /I /Y && xcopy src\\views dist\\views /E /I /Y",
     "build": "tsc && npm run copyFiles",
     "lint": "npx eslint",
     "watch": "concurrently -n \"TSC,COPY\" -c \"cyan,yellow\" \"tsc --watch\" \"npx chokidar \\\"src/public/**/*\\\" \\\"src/views/**/*\\\" -c \\\"npm run copyFiles\\\"\"",
-    "dev": "cross-env NODE_ENV=development concurrently -k -n \"BUILD,SERVER\" -c \"blue,green\" \"npm run watch\" \"node --watch --loader ts-node/esm src/index.ts\"",
+    "dev": "cross-env NODE_ENV=development concurrently -k -n \"BUILD,SERVER\" -c \"blue,green\" \"npm run watch\" \"nodemon --watch src --ext ts,handlebars --exec node --loader ts-node/esm src/index.ts\"",
     "start": "cross-env NODE_ENV=production node dist/index.js"
   },
   "author": "Ignacio Fleming",

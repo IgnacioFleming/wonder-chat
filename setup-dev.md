@@ -22,7 +22,7 @@ dist/               # Build final (JS compilado desde TypeScript)
 ## 📦 Dependencias de desarrollo
 
 ```bash
-npm install --save-dev chokidar-cli livereload connect-livereload cpy-cli concurrently
+npm install --save-dev chokidar-cli livereload connect-livereload cpy-cli concurrently cross-env nodemon
 ```
 
 ---
@@ -35,9 +35,9 @@ npm install --save-dev chokidar-cli livereload connect-livereload cpy-cli concur
 
   "watch": "concurrently -n \"TSC,COPY\" -c \"cyan,magenta\" \"tsc --watch\" \"npx chokidar \\\"src/public/**/*\\\" \\\"src/views/**/*\\\" -c \\\"npm run copyFiles\\\"\"",
 
-  "dev": "concurrently -k -n \"BUILD,SERVER,LIVERELOAD\" -c \"blue,green,yellow\" \"npm run watch\" \"node --watch --loader ts-node/esm src/index.ts\" \"npx livereload dist --quiet\"",
+  "dev": "cross-env NODE_ENV=development concurrently -k -n \"BUILD,SERVER\" -c \"blue,green\" \"npm run watch\" \"nodemon --watch src --ext ts,hbs --ignore src/public --exec ts-node-esm src/index.ts --delay 100\"",
 
-  "start": "node dist/index.js"
+  "start": "cross-env NODE_ENV=production node dist/index.js"
 }
 ```
 
@@ -50,28 +50,33 @@ En `src/index.ts`:
 ```ts
 import express from "express";
 import path from "path";
-import livereload from "livereload";
-import connectLivereload from "connect-livereload";
 
 const app = express();
 
-// Middleware de livereload
-app.use(connectLivereload());
+if (process.env.NODE_ENV === "development") {
+  const livereload = await import("livereload");
+  const connectLivereload = await import("connect-livereload");
 
-// Static files
+  app.use(connectLivereload.default());
+
+  const liveReloadServer = livereload.createServer();
+  liveReloadServer.watch([path.join(__dirname, "../public"), path.join(__dirname, "../views")]);
+
+  liveReloadServer.server.once("connection", () => {
+    setTimeout(() => {
+      liveReloadServer.refresh("/");
+    }, 100);
+  });
+}
+
+// Static files y vistas
 app.use(express.static(path.join(__dirname, "../public")));
+app.set("views", path.join(__dirname, "../views"));
+app.set("view engine", "hbs");
 
-// Vistas y otros setup...
-
-// LiveReload server
-const liveReloadServer = livereload.createServer();
-liveReloadServer.watch([path.join(__dirname, "../public"), path.join(__dirname, "../views")]);
-
-liveReloadServer.server.once("connection", () => {
-  setTimeout(() => {
-    liveReloadServer.refresh("/");
-  }, 100);
-});
+if (process.env.NODE_ENV === "development") {
+  app.set("view cache", false);
+}
 ```
 
 ---
@@ -97,113 +102,31 @@ Esto:
 - Compila el TS automáticamente
 - Copia los archivos estáticos y vistas cuando los modificás
 - Sirve el backend con Express
-- Recarga el navegador al hacer cualquier cambio ✨
+- Recarga el navegador al hacer cualquier cambio
+- Reinicia el servidor si tocás `.ts` o `.hbs`
 
 ---
 
-¡Listo! Tenés un entorno de desarrollo con hot reload, build automatizado y todo lo que necesitás para codear sin trabas 💪
+## 🛠 Troubleshooting
 
-# 🛠️ Setup de Desarrollo para el Clone de WhatsApp Web
+### ❗ Error: `EADDRINUSE: address already in use :::35729`
 
-Este archivo documenta cómo está configurado el entorno de desarrollo del proyecto para automatizar el build, copiado de archivos y recarga automática del navegador.
+Eso significa que ya hay un proceso usando el puerto de livereload (probablemente un server anterior quedó abierto).
 
----
-
-## 📁 Estructura
-
-```
-src/
-├── public/         # Archivos estáticos fuente (CSS, JS, imágenes)
-├── views/          # Plantillas Handlebars
-├── index.ts        # Entry point del servidor Express
-
-public/             # Archivos estáticos ya copiados (servidos por Express)
-views/              # Vistas compiladas/copias (servidas por Express)
-dist/               # Build final (JS compilado desde TypeScript)
-```
-
----
-
-## 📦 Dependencias de desarrollo
+🧽 Solución rápida (Windows):
 
 ```bash
-npm install --save-dev chokidar-cli livereload connect-livereload cpy-cli concurrently
+netstat -ano | findstr :35729
 ```
 
----
-
-## ⚙️ Scripts del `package.json`
-
-```json
-"scripts": {
-  "copyFiles": "npx cpy \"src/public/css/**/*\" \"dist/public/css\" && npx cpy \"src/views/**/*\" \"dist/views\"",
-
-  "watch": "concurrently -n \"TSC,COPY\" -c \"cyan,magenta\" \"tsc --watch\" \"npx chokidar \\\"src/public/**/*\\\" \\\"src/views/**/*\\\" -c \\\"npm run copyFiles\\\"\"",
-
-  "dev": "concurrently -k -n \"BUILD,SERVER,LIVERELOAD\" -c \"blue,green,yellow\" \"npm run watch\" \"node --watch --loader ts-node/esm src/index.ts\" \"npx livereload dist --quiet\"",
-
-  "start": "node dist/index.js"
-}
-```
-
----
-
-## 🌐 Express + Livereload
-
-En `src/index.ts`:
-
-```ts
-import express from "express";
-import path from "path";
-import livereload from "livereload";
-import connectLivereload from "connect-livereload";
-
-const app = express();
-
-// Middleware de livereload
-app.use(connectLivereload());
-
-// Static files
-app.use(express.static(path.join(__dirname, "../public")));
-
-// Vistas y otros setup...
-
-// LiveReload server
-const liveReloadServer = livereload.createServer();
-liveReloadServer.watch([path.join(__dirname, "../public"), path.join(__dirname, "../views")]);
-
-liveReloadServer.server.once("connection", () => {
-  setTimeout(() => {
-    liveReloadServer.refresh("/");
-  }, 100);
-});
-```
-
----
-
-## 🧩 En el layout Handlebars (`main.hbs` o similar)
-
-Al final del `<body>`, agregá:
-
-```html
-<script src="http://localhost:35729/livereload.js"></script>
-```
-
----
-
-## 🚀 ¿Cómo corro el proyecto en desarrollo?
+Buscás el PID, luego:
 
 ```bash
-npm run dev
+taskkill /PID <pid> /F
 ```
 
-Esto:
-
-- Compila el TS automáticamente
-- Copia los archivos estáticos y vistas cuando los modificás
-- Sirve el backend con Express
-- Recarga el navegador al hacer cualquier cambio ✨
+O directamente asegurate de no estar corriendo `livereload` tanto desde el script como desde el código.
 
 ---
 
-¡Listo! Tenés un entorno de desarrollo con hot reload, build automatizado y todo lo que necesitás para codear sin trabas 💪
+¡Listo! Tenés un entorno de desarrollo con hot reload, build automatizado, recarga de navegador y reinicio de servidor sin tocar nada más 💥
