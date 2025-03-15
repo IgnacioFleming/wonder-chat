@@ -6,8 +6,7 @@ import { STATUS_TYPES } from "../utils/status.ts";
 export default class UserController {
   static getAll: Middleware = async (req, res, next) => {
     try {
-      const { status, payload, error } = await UserDAO.getAll();
-      if (status === STATUS_TYPES.NOT_FOUND) return responses.notFoundResponse(res, { error });
+      const { payload } = await UserDAO.getAll();
       responses.successResponse(res, payload);
     } catch (error: unknown) {
       next(error);

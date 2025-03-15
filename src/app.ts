@@ -9,6 +9,7 @@ import { createServer } from "node:http";
 import config from "./config/config.ts";
 import SocketManager from "./sockets/SocketManager.ts";
 import { reloadClient } from "./config/livereload.ts";
+import contactsRouter from "./routes/contacts.ts";
 
 const app = express();
 export const server = createServer(app);
@@ -23,6 +24,7 @@ app.set("view engine", "handlebars");
 app.set("views", __dirname + "/dist/views");
 app.use("/api/users", usersRouter);
 app.use(viewsRouter);
+app.use("/api/contacts", contactsRouter);
 app.use(createCustomError);
 
 const socket = new SocketManager(server);
