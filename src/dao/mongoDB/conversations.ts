@@ -1,6 +1,5 @@
 import { conversationSchema } from "../../schemas/conversations.ts";
 import { Conversation, LastMessage, Message, ObjectId } from "../../types/types.js";
-import { STATUS_TYPES } from "../../utils/status.ts";
 import { conversationModel } from "../models/conversations.ts";
 
 export default class ConversationDAO {
