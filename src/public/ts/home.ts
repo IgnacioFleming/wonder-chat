@@ -13,6 +13,8 @@ const newMessageInput = document.getElementById("newMessage") as HTMLTextAreaEle
 
 const socket = window.io();
 
+socket.emit("register", userId);
+
 socket.on("sendMessage", ({ payload }: { payload: ClientMessage }) => {
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
   helpers.renderSingleMessage(payload, userId, messagesSection);

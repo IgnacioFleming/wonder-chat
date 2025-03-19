@@ -1,16 +1,12 @@
+import { STATUSES } from "../types/enums.js";
 import { Response } from "../types/types.js";
-import { STATUS_TYPES } from "./status.ts";
 
 const successResponse: Response = (res, payload) => {
-  res.json({ status: STATUS_TYPES.SUCCESS, payload });
-};
-
-const notFoundResponse: Response = (res, error) => {
-  res.json({ status: STATUS_TYPES.NOT_FOUND, error });
+  res.json({ status: STATUSES.SUCCESS, payload });
 };
 
 const errorResponse: Response = (res, error) => {
-  res.json({ status: STATUS_TYPES.ERROR, error });
+  res.json({ status: STATUSES.ERROR, error });
 };
 
-export default { successResponse, notFoundResponse, errorResponse };
+export default { successResponse, errorResponse };

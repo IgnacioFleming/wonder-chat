@@ -1,11 +1,7 @@
-import { STATUS_TYPES } from "./status.js";
 const successResponse = (res, payload) => {
-    res.json({ status: STATUS_TYPES.SUCCESS, payload });
-};
-const notFoundResponse = (res, error) => {
-    res.json({ status: STATUS_TYPES.NOT_FOUND, error });
+    res.json({ status: "success" /* STATUSES.SUCCESS */, payload });
 };
 const errorResponse = (res, error) => {
-    res.json({ status: STATUS_TYPES.ERROR, error });
+    res.json({ status: "error" /* STATUSES.ERROR */, error });
 };
-export default { successResponse, notFoundResponse, errorResponse };
+export default { successResponse, errorResponse };
