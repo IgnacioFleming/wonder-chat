@@ -23,7 +23,16 @@ export default class UserDAO {
   static async getbyId(id: string): Promise<PersistResult<User>> {
     try {
       const user = await userModel.findById(id).lean<User>();
-      if (!user?.username) return { status: STATUSES.ERROR, error: "User not found." };
+      if (!user?.full_name) return { status: STATUSES.ERROR, error: "User not found." };
+      return { status: STATUSES.SUCCESS, payload: user };
+    } catch (error) {
+      throw error;
+    }
+  }
+  static async getbyFullName(name: string): Promise<PersistResult<User>> {
+    try {
+      const user = await userModel.findOne({ full_name: name }).lean<User>();
+      if (!user?.full_name) return { status: STATUSES.ERROR, error: "User not found." };
       return { status: STATUSES.SUCCESS, payload: user };
     } catch (error) {
       throw error;

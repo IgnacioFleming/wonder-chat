@@ -21,7 +21,18 @@ export default class UserDAO {
     static async getbyId(id) {
         try {
             const user = await userModel.findById(id).lean();
-            if (!user?.username)
+            if (!user?.full_name)
+                return { status: "error" /* STATUSES.ERROR */, error: "User not found." };
+            return { status: "success" /* STATUSES.SUCCESS */, payload: user };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    static async getbyFullName(name) {
+        try {
+            const user = await userModel.findOne({ full_name: name }).lean();
+            if (!user?.full_name)
                 return { status: "error" /* STATUSES.ERROR */, error: "User not found." };
             return { status: "success" /* STATUSES.SUCCESS */, payload: user };
         }

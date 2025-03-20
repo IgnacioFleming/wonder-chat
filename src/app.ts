@@ -10,6 +10,8 @@ import config from "./config/config.ts";
 import SocketManager from "./sockets/SocketManager.ts";
 import { reloadClient } from "./config/livereload.ts";
 import contactsRouter from "./routes/contacts.ts";
+import sessionsRouter from "./routes/sessions.ts";
+import { initializePassport } from "./auth/passport.ts";
 
 const app = express();
 export const server = createServer(app);
@@ -22,9 +24,14 @@ app.use(express.static(__dirname + "/dist/public"));
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/dist/views");
+
+initializePassport();
+
 app.use("/api/users", usersRouter);
 app.use(viewsRouter);
 app.use("/api/contacts", contactsRouter);
+app.use("/api/sessions", sessionsRouter);
+
 app.use(createCustomError);
 
 const socket = new SocketManager(server);
