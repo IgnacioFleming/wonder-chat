@@ -6,7 +6,11 @@ const successResponse: Response = (res, payload) => {
 };
 
 const errorResponse: Response = (res, error) => {
-  res.json({ status: STATUSES.ERROR, error });
+  res.status(400).json({ status: STATUSES.ERROR, error });
 };
 
-export default { successResponse, errorResponse };
+const unauthorizedResponse: Response = (res) => {
+  res.status(401).json({ status: STATUSES.ERROR, error: "Unauthorized" });
+};
+
+export default { successResponse, errorResponse, unauthorizedResponse };

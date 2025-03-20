@@ -19,6 +19,10 @@ export interface User {
   is_online?: boolean;
 }
 
+export interface UserWithId extends User {
+  _id: ObjectId;
+}
+
 export interface Message {
   author: ObjectId;
   content: string;

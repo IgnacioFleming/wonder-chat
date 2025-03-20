@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy } from "passport-local";
-import { User } from "../types/types.js";
+import { User, UserWithId } from "../types/types.js";
 import UserDAO from "../dao/mongoDB/users.ts";
 import { STATUSES, STRATEGIES } from "../types/enums.js";
 const LocalStrategy = Strategy;
@@ -23,7 +23,6 @@ export const initializePassport = () => {
     new LocalStrategy({ usernameField: "full_name" }, async (username, password, done) => {
       try {
         const result = await UserDAO.getbyFullName(username);
-        console.log(result);
         if (result.status === STATUSES.ERROR) return done(null, false);
         if (result.payload.password !== password) return done(null, false);
         return done(null, result.payload);
@@ -32,4 +31,14 @@ export const initializePassport = () => {
       }
     })
   );
+
+  passport.serializeUser((user: any, done) => {
+    return done(null, user._id);
+  });
+
+  passport.deserializeUser(async (id: string, done) => {
+    const result = await UserDAO.getbyId(id);
+    if (result.status !== STATUSES.SUCCESS) return done(result.error || "User not found");
+    return done(null, result.payload);
+  });
 };
