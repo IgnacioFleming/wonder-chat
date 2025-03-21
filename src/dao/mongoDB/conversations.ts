@@ -16,6 +16,7 @@ export default class ConversationDAO {
     return { status: STATUSES.SUCCESS, payload: conversation };
   }
   static async create(conversation: Conversation): Promise<PersistResult<Conversation>> {
+    console.log("esta es la conversacion", conversation);
     const { success, data, error } = conversationSchema.safeParse(conversation);
     if (!success) return { status: STATUSES.ERROR, error };
 
@@ -30,7 +31,7 @@ export default class ConversationDAO {
   }
   static async startConversation(body: Message): Promise<PersistResult<string>> {
     const { status } = await this.getByParticipants([body.author, body.receiver]);
-    if (status === STATUSES.ERROR) return { status, error: "This conversation allready exists" };
+    if (status === STATUSES.SUCCESS) return { status: STATUSES.ERROR, error: "This conversation allready exists" };
     const newConversation: Conversation = {
       participants: [body.author, body.receiver],
       lastMessage: {
@@ -38,7 +39,8 @@ export default class ConversationDAO {
         content: body.content,
       },
     };
-    await this.create(newConversation);
-    return { status, payload: "New conversation created" };
+    const result = await this.create(newConversation);
+    if (result.status !== STATUSES.SUCCESS) return { status: result.status, error: result.error || "There was an error during the process" };
+    return { status: STATUSES.SUCCESS, payload: "New conversation created" };
   }
 }
