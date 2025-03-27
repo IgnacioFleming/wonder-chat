@@ -1,4 +1,4 @@
-import { ClientMessage, Conversation, ObjectId, UserWithId } from "../../types/types.js";
+import { ClientMessage, ObjectId, PopulatedConversation, UserWithId } from "../../types/types.js";
 import helpers from "./helpers.ts";
 
 declare global {
@@ -17,22 +17,37 @@ const socket = window.io();
 
 socket.emit("register", userId);
 socket.emit("getConversations", { userId });
-socket.on("getConversations", ({ payload }: { payload: Conversation[] }) => {
-  console.log(payload);
+socket.on("getConversations", ({ payload }: { payload: PopulatedConversation[] }) => {
+  const conversationsContainer = document.querySelector(".conversations") as HTMLDivElement;
+  payload.forEach((conversation) => {
+    const [contact] = conversation.participants.filter((p) => p._id !== userId);
+    const conversationDiv = document.createElement("div");
+    conversationDiv.classList.add("list-group-item", "list-item", "contact");
+    conversationDiv.innerHTML = `
+      <img class="avatar" src="${contact.photo || "/images/avatar1.png"}" alt="profile avatar" />
+      <div>
+          <h3 class="conversation-name">${contact.full_name}</h3>
+          <p class="last-message">${conversation.lastMessage.content}</p>
+      </div>
+          `;
+    conversationDiv.addEventListener("click", () => openConversation(contact));
+    conversationsContainer.appendChild(conversationDiv);
+  });
 });
+
+function openConversation(contact: UserWithId) {
+  helpers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
+  socket.emit("getMessages", { userId, contactId: contact._id });
+  socket.on("sendMessages", (result: ClientMessage[]) => {
+    if (result.length > 0) return helpers.renderMessages(result, userId.toString());
+  });
+}
 
 socket.on("sendMessage", ({ payload }: { payload: ClientMessage }) => {
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
   helpers.renderSingleMessage(payload, userId.toString(), messagesSection);
   messagesSection.scrollTop = messagesSection.scrollHeight;
 });
-
-//this code block has to be called in a function when the user enters a conversation.
-
-// socket.emit("getMessages", { userId, contactId });
-// socket.on("getMessages", ({ status, payload }: { status: "success" | "error"; payload: ClientMessage[] }) => {
-//   if (status === "success") return helpers.renderMessages(payload, userId.toString());
-// });
 
 newMessageInput.addEventListener("keydown", (e: KeyboardEvent) => {
   if (e.key !== "Enter") return;

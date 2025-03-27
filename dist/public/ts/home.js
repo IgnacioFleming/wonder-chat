@@ -9,18 +9,35 @@ const socket = window.io();
 socket.emit("register", userId);
 socket.emit("getConversations", { userId });
 socket.on("getConversations", ({ payload }) => {
-    console.log(payload);
+    const conversationsContainer = document.querySelector(".conversations");
+    payload.forEach((conversation) => {
+        const [contact] = conversation.participants.filter((p) => p._id !== userId);
+        const conversationDiv = document.createElement("div");
+        conversationDiv.classList.add("list-group-item", "list-item", "contact");
+        conversationDiv.innerHTML = `
+      <img class="avatar" src="${contact.photo || "/images/avatar1.png"}" alt="profile avatar" />
+      <div>
+          <h3 class="conversation-name">${contact.full_name}</h3>
+          <p class="last-message">${conversation.lastMessage.content}</p>
+      </div>
+          `;
+        conversationDiv.addEventListener("click", () => openConversation(contact));
+        conversationsContainer.appendChild(conversationDiv);
+    });
 });
+function openConversation(contact) {
+    helpers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
+    socket.emit("getMessages", { userId, contactId: contact._id });
+    socket.on("sendMessages", (result) => {
+        if (result.length > 0)
+            return helpers.renderMessages(result, userId.toString());
+    });
+}
 socket.on("sendMessage", ({ payload }) => {
     const messagesSection = document.querySelector("section.messages");
     helpers.renderSingleMessage(payload, userId.toString(), messagesSection);
     messagesSection.scrollTop = messagesSection.scrollHeight;
 });
-//this code block has to be called in a function when the user enters a conversation.
-// socket.emit("getMessages", { userId, contactId });
-// socket.on("getMessages", ({ status, payload }: { status: "success" | "error"; payload: ClientMessage[] }) => {
-//   if (status === "success") return helpers.renderMessages(payload, userId.toString());
-// });
 newMessageInput.addEventListener("keydown", (e) => {
     if (e.key !== "Enter")
         return;

@@ -46,6 +46,9 @@ export interface Conversation {
   lastMessage: LastMessage;
 }
 
+export interface PopulatedConversation extends Conversation {
+  participants: UserWithId[];
+}
 export interface GetMessagesParams {
   userId: string;
   contactId: string;
