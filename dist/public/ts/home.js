@@ -29,7 +29,7 @@ socket.on("getConversations", ({ payload }) => {
 function openConversation(contact) {
     if (!userId)
         return;
-    GlobalState.selectedContact = contact;
+    // GlobalState.selectedContact = contact;
     helpers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
     socket.emit("getMessages", { userId, contactId: contact._id });
     socket.on("sendMessages", (result) => {
