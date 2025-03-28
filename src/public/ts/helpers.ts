@@ -15,7 +15,7 @@ const renderSingleMessage = (message: ClientMessage, senderId: string, target: H
 };
 
 const sendMessage = async (socket: Socket, message: ClientMessage) => {
-  socket.emit("sendMessage", message);
+  socket.emit("newMessage", message);
 };
 
 const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_name" | "photo">) => {
