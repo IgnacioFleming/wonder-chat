@@ -1,6 +1,7 @@
 import { PersistResult } from "../../types/DAO.js";
 import { STATUSES } from "../../types/enums.js";
-import { AuthUser } from "../../types/types.js";
+import { AuthUser, UserWithId } from "../../types/types.js";
+import helpers from "./helpers.ts";
 
 const path = location.pathname;
 const successAlert = location.pathname === "/register" ? "Usuario registrado ok" : "Usuario logueado correctamente";
@@ -19,7 +20,7 @@ form.addEventListener("submit", (e) => {
     body: JSON.stringify(userEntries),
   })
     .then((res) => res.json())
-    .then((json: PersistResult<string>) => {
+    .then((json: PersistResult<Omit<UserWithId, "password">>) => {
       if (location.pathname === "/register") {
         if (json.status === STATUSES.SUCCESS) {
           alert(successAlert);
@@ -29,7 +30,7 @@ form.addEventListener("submit", (e) => {
       }
       if (location.pathname === "/login") {
         if (json.status !== STATUSES.SUCCESS) return alert(errorAlert);
-        localStorage.setItem("user", JSON.stringify(json.payload));
+        helpers.setUser(json.payload);
         return (location.href = "/");
       }
     });

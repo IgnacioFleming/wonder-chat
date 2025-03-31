@@ -18,6 +18,8 @@
   flex-direction: column;
   gap: 15px;
   padding: 20px;
+  position: relative;
+  overflow: hidden;
 }
 .conversation {
   background-color: var(--main-gray);
@@ -35,6 +37,57 @@
 
 .sidebar header h3 {
   flex-grow: 1;
+}
+
+.sidebar #contacts {
+  position: absolute;
+  background-color: var(--white);
+  width: 100%;
+  height: 100%;
+  animation: contacts-slideIn 0.3s ease-in-out;
+  margin: -20px;
+  padding: 20px;
+}
+
+.sidebar #contacts.hidden {
+  display: none;
+}
+
+.sidebar #contacts.close {
+  animation: contacts-slideOut 0.3s ease-in-out;
+}
+.sidebar #contacts.block {
+  display: block;
+}
+@keyframes contacts-slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes contacts-slideOut {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.sidebar #contacts header {
+  display: flex;
+  gap: 30px;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-inline: 10px;
+  font-size: x-small;
+  color: var(--light-dark);
+}
+.sidebar #contacts header h5 {
+  margin: 0;
 }
 
 .search-conversations {
@@ -194,7 +247,7 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   background-color: var(--main-gray);
 }
 
-.conversations .contact .conversation-name {
+.conversation-name {
   font-weight: 400;
   font-size: larger;
   margin: 0;

@@ -1,5 +1,6 @@
-import { ClientMessage, PopulatedConversation, UserWithId } from "../../types/types.js";
+import { ClientMessage, PopulatedConversation } from "../../types/types.js";
 import helpers from "./helpers.ts";
+import { getContacts } from "./services/contacts.ts";
 import { GlobalState } from "./store.ts";
 
 declare global {
@@ -12,6 +13,10 @@ if (!GlobalState.user || !GlobalState.user._id) window.location.href = "/login";
 const userId = GlobalState.user?._id;
 let contactId = GlobalState.selectedContact?._id;
 const newMessageInput = document.getElementById("newMessage") as HTMLTextAreaElement;
+const allContactsSection = document.getElementById("contacts") as HTMLElement;
+const contactsList = document.getElementById("contacts-list") as HTMLDivElement;
+const newMessageBtn = document.getElementById("new-message-btn") as HTMLElement;
+const closeContactsBtn = document.getElementById("close-contacts") as HTMLElement;
 
 const socket = window.io();
 
@@ -19,32 +24,8 @@ socket.emit("register", userId);
 socket.emit("getConversations", { userId });
 socket.on("getConversations", ({ payload }: { payload: PopulatedConversation[] }) => {
   const conversationsContainer = document.querySelector(".conversations") as HTMLDivElement;
-  payload.forEach((conversation) => {
-    const [contact] = conversation.participants.filter((p) => p._id !== userId);
-    const conversationDiv = document.createElement("div");
-    conversationDiv.classList.add("list-group-item", "list-item", "contact");
-    conversationDiv.innerHTML = `
-      <img class="avatar" src="${contact.photo || "/images/avatar1.png"}" alt="profile avatar" />
-      <div>
-          <h3 class="conversation-name">${contact.full_name}</h3>
-          <p class="last-message">${conversation.lastMessage.content}</p>
-      </div>
-          `;
-    conversationDiv.addEventListener("click", () => openConversation(contact));
-    conversationsContainer.appendChild(conversationDiv);
-  });
+  helpers.renderListOfContacts(socket, conversationsContainer, payload);
 });
-//refactorizar para renderizar los mensajes de acuerdo a un cambio de estado
-function openConversation(contact: UserWithId) {
-  if (!userId) return;
-  // GlobalState.selectedContact = contact;
-  helpers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
-  socket.emit("getMessages", { userId, contactId: contact._id });
-  socket.on("sendMessages", (result: ClientMessage[]) => {
-    if (result.length > 0) return helpers.renderMessages(result, userId.toString());
-  });
-  contactId = contact._id;
-}
 
 function sendMessage(e: KeyboardEvent) {
   if (!userId) return;
@@ -64,3 +45,19 @@ socket.on("sendMessage", (message: ClientMessage) => {
 });
 
 newMessageInput.addEventListener("keydown", sendMessage);
+newMessageBtn.addEventListener("click", async () => {
+  if (!userId) return;
+  const contacts = await getContacts(userId);
+  console.log(contacts);
+  allContactsSection.classList.replace("hidden", "block");
+  if (!contacts || contacts?.length <= 0) return;
+  helpers.renderListOfContacts(socket, contactsList, contacts);
+});
+
+closeContactsBtn.addEventListener("click", () => {
+  allContactsSection.classList.add("close");
+  setTimeout(() => {
+    allContactsSection.classList.replace("block", "hidden");
+    allContactsSection.classList.remove("close");
+  }, 290);
+});
