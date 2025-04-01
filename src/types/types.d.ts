@@ -33,13 +33,7 @@ export interface Message {
   isSent?: boolean;
   isRead?: boolean;
 }
-
-export interface ClientMessage extends Message {
-  author: string;
-  receiver: string;
-}
-
-type LastMessage = Omit<Message, "isSent" | "receiver">;
+type LastMessage = Omit<Message, "isSent" | "receiver" | "_id">;
 
 export interface Conversation {
   participants: ObjectId[];

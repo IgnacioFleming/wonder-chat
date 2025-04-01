@@ -5,15 +5,20 @@ import MessageDAO from "../../dao/mongoDB/messages.ts";
 import { userSocketMap } from "../SocketManager.ts";
 import { toObjectId } from "../../utils/utils.ts";
 import { STATUSES } from "../../types/enums.js";
+import ConversationDAO from "../../dao/mongoDB/conversations.ts";
 
 export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, socketServer: Server<ServerToClientEvents>) => {
   socket.on("newMessage", async (message: Message) => {
-    await MessageDAO.create(message);
-    socket.emit("sendMessage", message);
-    const receiverSocketId = userSocketMap.get(message.receiver.toString());
+    const result = await ConversationDAO.startConversation(message);
+    if (result.status === STATUSES.SUCCESS) socket.emit("sendConversation", { payload: result.payload });
 
-    if (receiverSocketId) {
-      socketServer.to(receiverSocketId).emit("sendMessage", message);
+    const newMessage = await MessageDAO.create(message);
+    if (newMessage.status === STATUSES.SUCCESS) {
+      socket.emit("sendMessage", message);
+      const receiverSocketId = userSocketMap.get(message.receiver.toString());
+      if (receiverSocketId) {
+        socketServer.to(receiverSocketId).emit("sendMessage", message);
+      }
     }
   });
 

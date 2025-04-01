@@ -89,6 +89,11 @@
 .sidebar #contacts header h5 {
   margin: 0;
 }
+#contacts-list {
+  height: calc(100% - 60px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
 
 .search-conversations {
   height: 30px;

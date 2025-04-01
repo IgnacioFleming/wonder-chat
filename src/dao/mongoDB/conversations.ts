@@ -22,13 +22,13 @@ export default class ConversationDAO {
     await conversationModel.create(data);
     return { status: STATUSES.SUCCESS, payload: conversation };
   }
-  static async replaceLastMessage(participants: ObjectId[], lastMessage: LastMessage): Promise<PersistResult<UpdateWriteOpResult>> {
-    const { success, data, error } = conversationSchema.safeParse({ participants, lastMessage });
-    if (!success) return { status: STATUSES.ERROR, error };
-    const newLastConversation = await conversationModel.updateOne({ participants: { $all: data.participants } }, { $set: { lastMessage: data.lastMessage } });
+  static async replaceLastMessage(participants: ObjectId[], lastMessageContent: string): Promise<PersistResult<UpdateWriteOpResult>> {
+    // const { success, data, error } = conversationSchema.safeParse({ participants, lastMessage });
+    // if (!success) return { status: STATUSES.ERROR, error };
+    const newLastConversation = await conversationModel.updateOne({ participants: { $all: participants } }, { lastMessage: { $set: { content: lastMessageContent } } });
     return { status: STATUSES.SUCCESS, payload: newLastConversation };
   }
-  static async startConversation(body: Message): Promise<PersistResult<string>> {
+  static async startConversation(body: Message): Promise<PersistResult<PopulatedConversation>> {
     const { status } = await this.getByParticipants([body.author, body.receiver]);
     if (status === STATUSES.SUCCESS) return { status: STATUSES.ERROR, error: "This conversation allready exists" };
     const newConversation: Conversation = {
@@ -40,6 +40,12 @@ export default class ConversationDAO {
     };
     const result = await this.create(newConversation);
     if (result.status !== STATUSES.SUCCESS) return { status: result.status, error: result.error || "There was an error during the process" };
-    return { status: STATUSES.SUCCESS, payload: "New conversation created" };
+    const populatedConversation = new conversationModel(result.payload);
+    return { status: STATUSES.SUCCESS, payload: await populatedConversation.populate("participants") };
+  }
+
+  static async exists(participants: ObjectId[]): Promise<boolean> {
+    const conversation = await conversationModel.findOne({ participants: { $all: participants } }).lean<Conversation>();
+    return !!conversation;
   }
 }
