@@ -10,6 +10,6 @@ const message: Message = {
   receiver: new mongoose.Types.ObjectId("67ddb741bf46ad8bb7c5184c"),
   content: "this is a mock message",
 };
-const result = await ConversationDAO.startConversation(message);
+const result = await ConversationDAO.updateConversation(message);
 console.log(result);
 process.exit(0);

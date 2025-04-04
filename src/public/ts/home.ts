@@ -4,6 +4,7 @@ import { globalState } from "./store.ts";
 import { ClientToServerEvents, ServerToClientEvents } from "../../types/websockets.js";
 import renderHandlers from "./helpers/renderHandlers.ts";
 import socketEventsHelpers from "./helpers/socketEventsHelpers.ts";
+import { sortConversations } from "./helpers/storeHandlers.ts";
 
 declare global {
   interface Window {
@@ -31,10 +32,13 @@ if (globalState?.user?._id) {
 }
 socket.on("sendConversations", ({ payload }) => {
   globalState.conversations = [...payload];
+  sortConversations();
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 socket.on("sendConversation", ({ payload }) => {
-  globalState.conversations.unshift(payload);
+  const conversationExists = globalState.conversations.some((c) => payload._id === c._id);
+  if (!conversationExists) globalState.conversations.push(payload);
+  sortConversations();
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 
@@ -42,6 +46,9 @@ socket.on("sendMessage", (message) => {
   if (!globalState.user?._id) return;
   renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
   messagesSection.scrollTop = messagesSection.scrollHeight;
+  socket.emit("getConversations", { userId: globalState.user._id });
+  sortConversations();
+  renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 
 //event listeners

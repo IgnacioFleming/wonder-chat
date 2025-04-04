@@ -6,8 +6,8 @@ export const conversationsHandler = (socket: Socket) => {
     const conversations = await ConversationDAO.getAllByUserId(userId);
     socket.emit("sendConversations", conversations);
   });
-  socket.on("startConversation", async (message) => {
-    const newConversation = await ConversationDAO.startConversation(message);
-    socket.emit("startConversation", newConversation);
-  });
+  // socket.on("startConversation", async (message) => {
+  //   const newConversation = await ConversationDAO.updateConversation(message);
+  //   socket.emit("startConversation", newConversation);
+  // });
 };

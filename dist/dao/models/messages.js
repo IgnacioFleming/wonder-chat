@@ -17,7 +17,7 @@ const messageSchema = new mongoose.Schema({
     },
     date: {
         type: String,
-        default: Date(),
+        default: () => new Date(),
     },
     isSent: {
         type: Boolean,

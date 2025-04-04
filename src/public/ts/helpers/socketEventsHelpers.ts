@@ -27,7 +27,7 @@ const sendMessage = (e: KeyboardEvent, socket: Socket, newMessageInput: HTMLText
   e.preventDefault();
   const content = newMessageInput.value.trim();
   if (!content) return;
-  socket.emit("newMessage", { author: userId.toString(), receiver: globalState.selectedContact?._id?.toString() || "", content });
+  socket.emit("newMessage", { author: userId, receiver: globalState.selectedContact?._id || "", content });
   newMessageInput.value = "";
 };
 
