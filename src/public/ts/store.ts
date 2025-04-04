@@ -7,10 +7,9 @@ type GlobalState = {
 };
 
 const persistedUser = localStorage.getItem("user");
-const persistedContact = localStorage.getItem("selectedContact");
 
 export const globalState: GlobalState = {
   user: persistedUser ? JSON.parse(persistedUser) : null,
-  selectedContact: persistedContact ? JSON.parse(persistedContact) : null,
+  selectedContact: null,
   conversations: [],
 };

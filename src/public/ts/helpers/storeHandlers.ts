@@ -1,4 +1,4 @@
-import { PopulatedConversation, UserWithId } from "../../../types/types.js";
+import { UserWithId } from "../../../types/types.js";
 import { globalState } from "../store.ts";
 
 export const setUser = (user: Omit<UserWithId, "password">) => {
