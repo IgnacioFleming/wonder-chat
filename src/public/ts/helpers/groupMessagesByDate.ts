@@ -18,8 +18,9 @@ export const groupMessagesByDate = (messages: Message[]): MessageGroup[] => {
     else if (msgDate.toDateString() === yesterday.toDateString()) label = "Yesterday";
     else {
       label = msgDate.toLocaleDateString("en-US", {
-        day: "numeric",
-        month: "long",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       });
     }
     if (!groups[label]) groups[label] = [];

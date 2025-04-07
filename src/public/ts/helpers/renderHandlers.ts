@@ -5,18 +5,30 @@ import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
 import { getHourFromDate } from "./utils.ts";
+import { groupMessagesByDate } from "./groupMessagesByDate.ts";
+
+const addDateHeading = (date: string, target: HTMLElement) => {
+  const dateHeading = document.createElement("h6");
+  dateHeading.className = "date-heading";
+  dateHeading.innerText = date.toUpperCase();
+  target.appendChild(dateHeading);
+};
 
 const renderMessages = (messages: Message[], senderId: string) => {
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
   messagesSection.innerHTML = "";
-  messages.forEach((message) => renderSingleMessage(message, senderId, messagesSection));
+  if (messages.length === 0) return;
+  const groupedMessages = groupMessagesByDate(messages);
+  groupedMessages.forEach((group) => {
+    addDateHeading(group.date, messagesSection);
+    group.messages.forEach((message) => renderSingleMessage(message, senderId, messagesSection));
+  });
 };
 
 const renderSingleMessage = (message: Message, senderId: string, target: HTMLElement) => {
-  console.log(message);
   const paragraph = document.createElement("p");
 
-  paragraph.innerHTML = `${message.content}<span class="message-time">${message.date ? getHourFromDate(new Date(message.date)) : ""}</span>`;
+  paragraph.innerHTML = `${message.content}<span class="message-time">${message.date ? getHourFromDate(new Date(message.date)) : getHourFromDate(new Date())}</span>`;
 
   paragraph.className = "message";
   if (message.author.toString() === senderId) paragraph.classList.add("sent");
@@ -82,4 +94,5 @@ export default {
   renderListOfContacts,
   closeContactsList,
   setConversationFooterVisible,
+  addDateHeading,
 };
