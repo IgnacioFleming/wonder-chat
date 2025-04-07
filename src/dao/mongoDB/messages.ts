@@ -46,6 +46,7 @@ export default class MessageDAO {
   }
   static async markAllAsReceived(userId: ObjectId): Promise<PersistResult<MessageWithId[]>> {
     const messages = await messageModel.find({ receiver: userId, status: MSG_STATUS.SENT }).lean<MessageWithId[]>();
+    console.log("los messages target son ,", messages);
     const messageIds = messages.map((msg) => msg._id);
     await messageModel.updateMany({ _id: { $in: messageIds } }, { $set: { status: MSG_STATUS.RECEIVED } });
     return { status: STATUSES.SUCCESS, payload: messages };

@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { Message, UserWithId } from "../../../types/types.js";
+import { UserWithId } from "../../../types/types.js";
 import { globalState } from "../store.ts";
 import renderHandlers from "./renderHandlers.ts";
 import { allContactsSection, messagesSection } from "../home.ts";

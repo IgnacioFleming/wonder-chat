@@ -17,7 +17,6 @@ export default class SocketManager {
 
   connect() {
     this.socketServer.on("connection", (socket) => {
-      console.log("new connection " + socket.id);
       socket.on("register", (userId: string) => {
         userSocketMap.set(userId, socket.id);
         console.log(`User ${userId} conectado con socket ${socket.id}`);
