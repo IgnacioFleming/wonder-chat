@@ -23,13 +23,33 @@ const closeContactsBtn = document.getElementById("close-contacts") as HTMLElemen
 const conversationsContainer = document.querySelector(".conversations") as HTMLDivElement;
 export const messagesSection = document.querySelector("section.messages") as HTMLElement;
 
+//DOM event listeners
+
+newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
+newMessageBtn.addEventListener("click", async () => {
+  if (!globalState.user?._id) return;
+  const contacts = await getContacts(globalState.user?._id);
+  allContactsSection.classList.replace("hidden", "block");
+  if (!contacts || contacts?.length <= 0) return;
+  renderHandlers.renderListOfContacts(socket, contactsList, contacts);
+});
+
+closeContactsBtn.addEventListener("click", renderHandlers.closeContactsList);
+
 //socket events
 
 const socket = window.io();
+
+//emits
+
 if (globalState?.user?._id) {
-  socket.emit("register", globalState.user?._id?.toString());
+  socket.emit("register", globalState.user._id.toString());
   socket.emit("getConversations", { userId: globalState.user._id });
+  socket.emit("markAllMessagesAsReceived", { userId: globalState.user._id });
 }
+
+//listeners
+
 socket.on("sendConversations", ({ payload }) => {
   globalState.conversations = [...payload];
   sortConversations();
@@ -51,15 +71,10 @@ socket.on("sendMessage", (message) => {
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 
-//event listeners
-
-newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
-newMessageBtn.addEventListener("click", async () => {
-  if (!globalState.user?._id) return;
-  const contacts = await getContacts(globalState.user?._id);
-  allContactsSection.classList.replace("hidden", "block");
-  if (!contacts || contacts?.length <= 0) return;
-  renderHandlers.renderListOfContacts(socket, contactsList, contacts);
+socket.on("updateMessageStatus", ({ messageId, status }) => {
+  console.log("from updateMessageStatus", messageId);
+  const messageIcon = messagesSection.querySelector(`[data-msgid="${messageId}"]`)?.querySelector("i") as HTMLElement;
+  console.log(messageIcon);
+  messageIcon.classList.replace("bi-check2", "bi-check2-all");
+  if (status === "read") messageIcon.classList.add("msg-read");
 });
-
-closeContactsBtn.addEventListener("click", renderHandlers.closeContactsList);

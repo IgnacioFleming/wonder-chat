@@ -1,21 +1,24 @@
-import { ClientMessage, GetMessagesParams, Message, ObjectId, PopulatedConversationWithId } from "./types.js";
+import { MSG_STATUS } from "./consts.ts";
+import { ClientMessage, GetMessagesParams, Message, MessageWithId, ObjectId, PopulatedConversationWithId } from "./types.js";
 
 type ClientCallback<T> = (payload: T) => Promise<void>;
 type ServerCallback<T> = (payload: T) => void;
 
 export interface ServerToClientEvents {
-  sendMessage: ServerCallback<Message>;
-  sendMessages: ServerCallback<Message[]>;
+  sendMessage: ServerCallback<MessageWithId>;
+  sendMessages: ServerCallback<MessageWithId[]>;
   register: ServerCallback<string>;
   sendConversations: ServerCallback<{ payload: PopulatedConversationWithId[] }>;
   sendConversation: ServerCallback<{ payload: PopulatedConversationWithId }>;
+  updateMessageStatus: ServerCallback<{ messageId: string; status: (typeof MSG_STATUS)[keyof typeof MSG_STATUS] }>;
 }
 
 export interface ClientToServerEvents {
-  newMessage: ClientCallback<Message>;
+  newMessage: ClientCallback<MessageWithId>;
   register: ClientCallback<string>;
   getMessages: ClientCallback<GetMessagesParams>;
-  markRead: ClientCallback<{ _id: ObjectId }>;
-  sendMessage: ClientCallback<Message>;
+  sendMessage: ClientCallback<MessageWithId>;
   getConversations: ClientCallback<{ userId: ObjectId }>;
+  sendMessages: ClientCallback<MessageWithId[]>;
+  markAllMessagesAsReceived: ClientCallback<{ userId: ObjectId }>;
 }

@@ -1,9 +1,9 @@
 import { UpdateWriteOpResult } from "mongoose";
 import { PersistResult } from "../../types/DAO.js";
-import type { Message, ObjectId } from "../../types/types.d.ts";
+import type { Message, MessageWithId, ObjectId } from "../../types/types.d.ts";
 import { messageModel } from "../models/messages.ts";
-import ConversationDAO from "./conversations.ts";
 import { STATUSES } from "../../types/enums.js";
+import { MSG_STATUS } from "../../types/consts.ts";
 
 export default class MessageDAO {
   static async getAll(): Promise<PersistResult<Message[]>> {
@@ -23,30 +23,31 @@ export default class MessageDAO {
       throw error;
     }
   }
-  static async getUserMessagesById(userId: ObjectId, contactId: ObjectId): Promise<PersistResult<Message[]>> {
+  static async getUserMessagesById(userId: ObjectId, contactId: ObjectId): Promise<PersistResult<MessageWithId[]>> {
     try {
       const messages = await messageModel
         .find({
           $or: [{ $and: [{ author: userId }, { receiver: contactId }] }, { $and: [{ author: contactId }, { receiver: userId }] }],
         })
-        .lean<Message[]>();
+        .lean<MessageWithId[]>();
       return { status: STATUSES.SUCCESS, payload: messages };
     } catch (error) {
       throw error;
     }
   }
-  static async create(body: Message): Promise<PersistResult<Message>> {
+  static async create(body: Message): Promise<PersistResult<MessageWithId>> {
     try {
       const message = await messageModel.create(body);
       if (!message?.id) return { status: STATUSES.ERROR, error: "Message could not been created" };
-      // const result = await ConversationDAO.replaceLastMessage([body.author, body.receiver], body.content);
-      return { status: STATUSES.SUCCESS, payload: body };
+      return { status: STATUSES.SUCCESS, payload: { ...body, _id: message.id } };
     } catch (error) {
       throw error;
     }
   }
-  static async markRead(id: ObjectId): Promise<PersistResult<UpdateWriteOpResult>> {
-    const update = await messageModel.updateOne({ _id: id }, { $set: { isRead: true } });
-    return { status: STATUSES.SUCCESS, payload: update };
+  static async markAllAsReceived(userId: ObjectId): Promise<PersistResult<MessageWithId[]>> {
+    const messages = await messageModel.find({ receiver: userId, status: MSG_STATUS.SENT }).lean<MessageWithId[]>();
+    const messageIds = messages.map((msg) => msg._id);
+    await messageModel.updateMany({ _id: { $in: messageIds } }, { $set: { status: MSG_STATUS.RECEIVED } });
+    return { status: STATUSES.SUCCESS, payload: messages };
   }
 }

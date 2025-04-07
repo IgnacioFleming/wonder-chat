@@ -19,7 +19,7 @@ const openConversation = (socket: Socket, contact: Omit<UserWithId, "password">)
   setSelectedContact(contact);
   renderHandlers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
   socket.emit("getMessages", { userId, contactId: contact._id });
-  socket.on("sendMessages", (result: Message[]) => {
+  socket.on("sendMessages", (result) => {
     if (result.length > 0) globalState.selectedContact.hasMessagesToday = true;
     return renderHandlers.renderMessages(result, userId.toString());
   });
