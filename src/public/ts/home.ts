@@ -64,15 +64,17 @@ socket.on("sendConversation", ({ payload }) => {
 
 socket.on("sendMessage", (message) => {
   if (!globalState.user?._id) return;
-  renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
-  messagesSection.scrollTop = messagesSection.scrollHeight;
+  if (globalState.selectedContact.contact?._id === message.author || globalState.selectedContact.contact?._id === message.receiver) {
+    renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
+  }
   socket.emit("getConversations", { userId: globalState.user._id });
   sortConversations();
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 
-socket.on("updateMessageStatus", ({ messageId, status }) => {
-  const messageIcon = messagesSection.querySelector(`[data-msgid="${messageId}"]`)?.querySelector("i") as HTMLElement;
+socket.on("updateMessageStatus", (result) => {
+  console.log(result);
+  const messageIcon = messagesSection.querySelector(`[data-msgid="${result.messageId}"]`)?.querySelector("i") as HTMLElement;
   messageIcon.classList.replace("bi-check2", "bi-check2-all");
   if (status === "read") messageIcon.classList.add("msg-read");
 });

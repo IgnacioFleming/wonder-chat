@@ -20,7 +20,7 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
       if (receiverSocketId) {
         socketServer.to(receiverSocketId).emit("sendMessage", newMessage.payload);
         const authorSocketId = userSocketMap.get(message.author.toString());
-        if (authorSocketId) socketServer.to(authorSocketId).emit("updateMessageStatus", { messageId: String(message._id), status: "received" });
+        if (authorSocketId) socketServer.to(authorSocketId).emit("updateMessageStatus", { messageId: String(newMessage.payload._id), status: "received" });
       }
     }
   });
@@ -34,13 +34,11 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
   });
 
   socket.on("markAllMessagesAsReceived", async ({ userId }) => {
-    console.log("llamo al socket para actualizar mensajes");
     const updatedMessages = await MessageDAO.markAllAsReceived(userId);
     if (updatedMessages.status !== STATUSES.SUCCESS) return;
     updatedMessages.payload.forEach((msg) => {
       const authorId = msg.author.toString();
       const receiverSocket = userSocketMap.get(authorId);
-      console.log("receiver socket is ", receiverSocket);
       if (receiverSocket) {
         socketServer.to(receiverSocket).emit("updateMessageStatus", { messageId: msg._id.toString(), status: "received" });
       }
