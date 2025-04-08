@@ -10,7 +10,7 @@ export interface ServerToClientEvents {
   register: ServerCallback<string>;
   sendConversations: ServerCallback<{ payload: PopulatedConversationWithId[] }>;
   sendConversation: ServerCallback<{ payload: PopulatedConversationWithId }>;
-  updateMessageStatus: ServerCallback<{ messageId: string; status: (typeof MSG_STATUS)[keyof typeof MSG_STATUS] }>;
+  updateMessageStatus: ServerCallback<{ message: MessageWithId; status: (typeof MSG_STATUS)[keyof typeof MSG_STATUS] }>;
 }
 
 export interface ClientToServerEvents {

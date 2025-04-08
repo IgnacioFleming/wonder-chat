@@ -22,6 +22,7 @@ const openConversation = (socket: Socket<ServerToClientEvents, ClientToServerEve
   renderHandlers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
   socket.emit("getMessages", { userId, contactId: contact._id });
   socket.on("sendMessages", (result) => {
+    if (result.length <= 0) return;
     const lastMessageDate = result[result.length - 1].date;
     if (lastMessageDate) globalState.selectedContact.lastMessageDate = new Date(lastMessageDate);
     renderHandlers.renderMessages(result, userId.toString());
