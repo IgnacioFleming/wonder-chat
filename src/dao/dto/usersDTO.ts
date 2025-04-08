@@ -1,7 +1,7 @@
-import { ObjectId, UserWithId } from "../../types/types.js";
+import { GeneralId, UserWithId } from "../../types/types.js";
 
 export default class UserDTO implements Omit<UserWithId, "password"> {
-  _id: ObjectId;
+  _id: GeneralId;
   full_name: string;
   is_online?: boolean | undefined;
   last_connection?: DateConstructor | undefined;

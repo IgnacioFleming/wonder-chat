@@ -4,6 +4,7 @@ import { globalState } from "../store.ts";
 import renderHandlers from "./renderHandlers.ts";
 import { allContactsSection, messagesSection } from "../home.ts";
 import { isToday } from "./utils.ts";
+import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
 
 const userId = globalState.user?._id;
 const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
@@ -15,14 +16,17 @@ const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
   return;
 };
 
-const openConversation = (socket: Socket, contact: Omit<UserWithId, "password">) => {
+const openConversation = (socket: Socket<ServerToClientEvents, ClientToServerEvents>, contact: Omit<UserWithId, "password">) => {
   if (!userId || contact._id === globalState.selectedContact.contact?._id) return;
   setSelectedContact(contact);
   renderHandlers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
   socket.emit("getMessages", { userId, contactId: contact._id });
   socket.on("sendMessages", (result) => {
-    globalState.selectedContact.lastMessageDate = new Date(result[result.length - 1].date);
-    return renderHandlers.renderMessages(result, userId.toString());
+    const lastMessageDate = result[result.length - 1].date;
+    if (lastMessageDate) globalState.selectedContact.lastMessageDate = new Date(lastMessageDate);
+    renderHandlers.renderMessages(result, userId.toString());
+    socket.emit("updateMessagesToRead", { userId, contactId: contact._id });
+    return;
   });
 };
 
