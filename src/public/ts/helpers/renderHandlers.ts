@@ -16,7 +16,7 @@ const addDateHeading = (date: string, target: HTMLElement) => {
 };
 
 const renderMessages = (messages: MessageWithId[], senderId: string) => {
-  2 + 23;
+  const firstUnreadMessage = messages.find((m) => m.author.toString() !== senderId && m.status !== "read");
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
   messagesSection.innerHTML = "";
   if (messages.length === 0) return;
@@ -25,6 +25,12 @@ const renderMessages = (messages: MessageWithId[], senderId: string) => {
     addDateHeading(group.date, messagesSection);
     group.messages.forEach((message) => renderSingleMessage(message, senderId, messagesSection));
   });
+  if (firstUnreadMessage) {
+    const targetMessage = messagesSection.querySelector(`[data-msgid="${firstUnreadMessage._id}"]`);
+    targetMessage?.scrollIntoView({ behavior: "auto", block: "center" });
+  } else {
+    messagesSection.scrollTop = messagesSection.scrollHeight;
+  }
 };
 
 const renderSingleMessage = (message: MessageWithId, senderId: string, target: HTMLElement) => {
@@ -40,7 +46,7 @@ const renderSingleMessage = (message: MessageWithId, senderId: string, target: H
   paragraph.className = "message";
   if (message.author.toString() === senderId) paragraph.classList.add("sent");
   target.appendChild(paragraph);
-  target.scrollTop = target.scrollHeight;
+  // target.scrollTop = target.scrollHeight;
 };
 
 const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_name" | "photo">) => {
