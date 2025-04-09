@@ -224,7 +224,7 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   scrollbar-width: thin;
 }
 
-.conversation .date-heading {
+.conversation .message-heading {
   background-color: var(--white);
   border-radius: 10px;
   padding: 8px;

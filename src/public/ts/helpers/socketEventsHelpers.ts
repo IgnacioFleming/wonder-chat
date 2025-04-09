@@ -39,7 +39,7 @@ const sendMessage = (e: KeyboardEvent, socket: Socket, newMessageInput: HTMLText
   const content = newMessageInput.value.trim();
   if (!content) return;
   if (globalState.selectedContact.lastMessageDate && !isToday(globalState.selectedContact.lastMessageDate)) {
-    renderHandlers.addDateHeading("TODAY", messagesSection);
+    renderHandlers.addHeading("TODAY", messagesSection);
     globalState.selectedContact.lastMessageDate = new Date();
   }
   socket.emit("newMessage", { author: userId, receiver: globalState.selectedContact?.contact?._id || "", content });
