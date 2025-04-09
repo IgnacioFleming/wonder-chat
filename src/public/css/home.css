@@ -139,12 +139,17 @@ input[type="radio"].btn-check:checked + .custom-toggle {
 
 .list-item {
   display: flex;
+  height: 100%;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
 }
 
 .list-item > div {
   flex-grow: 1;
+  padding-block: 5px;
+  height: 50px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .list-item .conversation-date {
@@ -156,7 +161,7 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   align-items: center;
 }
 
-.list-item p {
+p {
   margin: 0;
 }
 
@@ -220,7 +225,6 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   gap: 5px;
   height: 100%;
   overflow-y: auto;
-  /* scroll-behavior: smooth; */
   scrollbar-width: thin;
 }
 
@@ -239,11 +243,18 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   color: var(--main-black);
   border-radius: 15px;
   padding: 8px;
-  margin: 0;
   max-width: 45%;
+  display: flex;
+  margin: 0;
+  text-wrap: wrap;
+  gap: 8px;
+}
+
+.conversation .messages .message p {
+  word-break: break-all;
   font-weight: 400;
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .conversation .messages .message.sent {
@@ -300,6 +311,7 @@ input[type="radio"].btn-check:checked + .custom-toggle {
 
 .contact {
   cursor: pointer;
+  padding-block: 14px;
 }
 .contact:hover {
   background-color: var(--main-gray);
@@ -315,4 +327,6 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   font-size: small;
   color: var(--dark-gray);
   font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
