@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { MessageWithId, PopulatedConversation, UserWithId } from "../../../types/types.js";
+import { MessageWithId, PopulatedConversation, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
 import { allContactsSection } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
@@ -65,19 +65,19 @@ const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_n
     `;
 };
 
-const renderListOfContacts = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, anchorElement: HTMLElement, conversations: PopulatedConversation[] | UserWithId[]) => {
+const renderListOfContacts = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, anchorElement: HTMLElement, listItems: PopulatedConversationWithId[] | UserWithId[]) => {
   anchorElement.innerHTML = "";
-  conversations.forEach((conversation) => {
+  listItems.forEach((item) => {
     let contact: UserWithId;
     let lastMessageContent = "";
     let date = "";
-    if (isPopulatedConversation(conversation)) {
-      const [other] = conversation.participants.filter((p) => p._id !== globalState.user?._id);
+    if (isPopulatedConversation(item)) {
+      const [other] = item.participants.filter((p) => p._id !== globalState.user?._id);
       contact = other;
-      lastMessageContent = conversation.lastMessage ?? "";
-      date = setDateLabel(conversation.date || new Date());
+      lastMessageContent = item.lastMessage ?? "";
+      date = setDateLabel(item.date || new Date());
     } else {
-      contact = conversation;
+      contact = item;
     }
     const conversationDiv = document.createElement("div");
     conversationDiv.classList.add("list-group-item", "list-item", "contact");
@@ -86,9 +86,18 @@ const renderListOfContacts = (socket: Socket<ClientToServerEvents, ServerToClien
     <div>
     <div class="conversation-first-line">
     <h3 class="conversation-name">${contact.full_name}</h3>
-    ${isPopulatedConversation(conversation) && conversation.date ? ` <div class="conversation-date">${date === "Today" ? getHourFromDate(new Date(conversation.date)) : date}</div>  ` : ""}
+    ${isPopulatedConversation(item) && item.date ? ` <div class="conversation-date">${date === "Today" ? getHourFromDate(new Date(item.date)) : date}</div>  ` : ""}
     </div>
-      ${lastMessageContent ? `<p class="last-message">${lastMessageContent}</p>` : ""}
+      ${
+        lastMessageContent
+          ? `<p class="last-message">
+        <span>
+        ${isPopulatedConversation(item) && item.author === globalState.user?._id ? `<i data-conversationId="${item.lastMessageId}" class="bi bi-${item.status === "sent" ? "check2" : "check2-all"} msg-check ${item.status === "read" && "msg-read"}"></i>` : ""}
+        </span>
+        ${lastMessageContent}
+        </p>`
+          : ""
+      }
     </div>
     `;
     conversationDiv.addEventListener("click", () => socketEventsHelpers.openConversation(socket, contact));
