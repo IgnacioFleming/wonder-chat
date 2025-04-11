@@ -296,6 +296,9 @@ p {
   color: var(--dark-gray);
   transition: color 0.2s ease;
 }
+.conversation .message-input .input-emoji:active {
+  border: none;
+}
 
 .conversation .message-input .input-emoji:hover {
   color: var(--main-black);
@@ -303,6 +306,48 @@ p {
 
 .conversation .message-input textarea {
   padding-left: 50px;
+}
+
+.conversation .message-input #emoji-picker.hidden {
+  display: none;
+}
+
+.conversation .message-input #emoji-picker.scaleOut {
+  transform: scaleY(0);
+  animation: emoji-picker-scaleOut 0.2s ease-out;
+}
+
+.conversation .message-input #emoji-picker {
+  position: absolute;
+  top: -150px;
+  left: -60px;
+  font-size: 20px;
+  width: 300px;
+  background-color: var(--white);
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 30px);
+  gap: 5px;
+  justify-content: center;
+  border-radius: 15px;
+  box-shadow: 2px 3px 10px var(--dark-gray);
+  transform-origin: bottom center;
+  transform: scaleY(1);
+  animation: emoji-picker-scaleIn 0.2s ease-out;
+}
+
+@keyframes emoji-picker-scaleIn {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes emoji-picker-scaleOut {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
 }
 
 .pointer {
