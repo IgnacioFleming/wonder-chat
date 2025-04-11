@@ -49,13 +49,14 @@ export default class MessageDAO {
 
     const messageIds = messages.map((msg) => msg._id);
     await messageModel.updateMany({ _id: { $in: messageIds } }, { $set: { status: MSG_STATUS.RECEIVED } });
-    await conversationModel.updateMany({ participants: userId }, { $set: { status: MSG_STATUS.RECEIVED } });
+    await conversationModel.updateMany({ participants: userId, author: { $ne: userId }, status: MSG_STATUS.SENT }, { $set: { status: MSG_STATUS.RECEIVED } });
     return { status: STATUSES.SUCCESS, payload: messages };
   }
   static async markAllAsRead(userId: GeneralId, contactId: GeneralId): Promise<PersistResult<MessageWithId[]>> {
     const messages = await messageModel.find({ $or: [{ status: MSG_STATUS.RECEIVED }, { status: MSG_STATUS.SENT }], author: contactId, receiver: userId }).lean<MessageWithId[]>();
     const messageIds = messages.map((msg) => msg._id);
     await messageModel.updateMany({ _id: { $in: messageIds } }, { $set: { status: MSG_STATUS.READ } });
+    await conversationModel.updateMany({ participants: { $all: [userId, contactId] }, status: MSG_STATUS.RECEIVED }, { $set: { status: MSG_STATUS.READ } });
     return { status: STATUSES.SUCCESS, payload: messages };
   }
 }

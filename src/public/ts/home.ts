@@ -20,12 +20,11 @@ export const allContactsSection = document.getElementById("contacts") as HTMLEle
 const contactsList = document.getElementById("contacts-list") as HTMLDivElement;
 const newMessageBtn = document.getElementById("new-message-btn") as HTMLElement;
 const closeContactsBtn = document.getElementById("close-contacts") as HTMLElement;
-const conversationsContainer = document.querySelector(".conversations") as HTMLDivElement;
+export const conversationsContainer = document.querySelector(".conversations") as HTMLDivElement;
 export const messagesSection = document.querySelector("section.messages") as HTMLElement;
 
 //DOM event listeners
 
-//arreglar problema donde no se actualiza el status del mensaje y la conversacion al estar abierta
 newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
 newMessageBtn.addEventListener("click", async () => {
   if (!globalState.user?._id) return;
@@ -51,17 +50,21 @@ if (globalState?.user?._id) {
 
 //listeners
 
+//me falta arreglar el sortconversations cuando se envia un mensaje
 socket.on("sendConversations", ({ payload }) => {
-  console.log("el payload de sendConversations", payload);
+  console.log("estoy ejecutando sendConversations");
   globalState.conversations = [...payload];
   sortConversations();
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 socket.on("sendConversation", ({ payload }) => {
+  console.log("entro aca");
   const conversationExists = globalState.conversations.some((c) => payload._id === c._id);
   if (!conversationExists) globalState.conversations.push(payload);
+  console.log("primer id", globalState.conversations[0]._id);
   sortConversations();
-  renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
+  console.log("segundo  id", globalState.conversations[0]._id);
+  renderHandlers.sortSingleConversation(globalState.conversations[0]._id);
 });
 
 socket.on("sendMessage", (message) => {
@@ -72,28 +75,26 @@ socket.on("sendMessage", (message) => {
   if (message.author !== globalState.user?._id && message.author === globalState.selectedContact.contact?._id) {
     if (globalState.user) socket.emit("updateMessagesToRead", { contactId: message.author, userId: globalState.user?._id });
   }
-
   messagesSection.scrollTo({
     top: messagesSection.scrollHeight,
     behavior: "smooth",
   });
-
-  socket.emit("getConversations", { userId: globalState.user._id });
-  sortConversations();
-  console.log("conversaciones del estado global");
-  console.log(globalState.conversations);
-  renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
+  // socket.emit("getConversations", { userId: globalState.user._id });
+  // const prevConversationId = globalState.conversations[0]._id.toString();
+  // sortConversations();
+  // const nextConversationId = globalState.conversations[0]._id.toString();
+  // if (prevConversationId !== nextConversationId) renderHandlers.sortSingleConversation(globalState.conversations[0]._id);
 });
 
 socket.on("updateMessageStatus", ({ message, status }) => {
-  const messageIcon = messagesSection.querySelector(`[data-msgid="${message._id}"]`)?.querySelector("i") as HTMLElement;
+  const messageIcon = messagesSection.querySelector(`[data-msgid="${message._id}"]`)?.querySelector("i");
   const conversationIcon = document.querySelector(`i[data-conversationid="${message._id}"]`) as HTMLElement;
   if (status === "received") {
-    messageIcon.classList.replace("bi-check2", "bi-check2-all");
+    messageIcon?.classList.replace("bi-check2", "bi-check2-all");
     conversationIcon.classList.replace("bi-check2", "bi-check2-all");
   }
   if (status === "read") {
-    messageIcon.classList.add("msg-read");
+    messageIcon?.classList.add("msg-read");
     conversationIcon.classList.add("msg-read");
   }
 });
