@@ -323,6 +323,11 @@ p {
   margin: 0;
 }
 
+.conversations {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
 .conversations .contact .last-message {
   font-size: 14px;
   color: var(--dark-gray);

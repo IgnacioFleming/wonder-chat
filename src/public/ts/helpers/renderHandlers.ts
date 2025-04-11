@@ -1,10 +1,10 @@
 import { Socket } from "socket.io";
-import { GeneralId, MessageWithId, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
+import { Conversation, GeneralId, MessageWithId, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
 import { allContactsSection, conversationsContainer } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
-import { getHourFromDate, setDateLabel } from "./utils.ts";
+import { getContactHtml, getHourFromDate } from "./utils.ts";
 import { groupMessagesByDate } from "./groupMessagesByDate.ts";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
 
@@ -65,52 +65,38 @@ const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_n
     `;
 };
 
+const renderContact = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, item: UserWithId | PopulatedConversationWithId, anchorElement: HTMLElement, onTop = false) => {
+  let contact: UserWithId;
+  if (isPopulatedConversation(item)) {
+    const [other] = item.participants.filter((p) => p._id !== globalState.user?._id);
+    contact = other;
+  } else {
+    contact = item;
+  }
+  const conversationDiv = document.createElement("div");
+  conversationDiv.setAttribute("data-conversationid", item._id.toString());
+  conversationDiv.classList.add("list-group-item", "list-item", "contact");
+  conversationDiv.innerHTML = getContactHtml(item, contact);
+  conversationDiv.addEventListener("click", () => socketEventsHelpers.openConversation(socket, contact));
+  if (onTop) anchorElement.prepend(conversationDiv);
+  else anchorElement.appendChild(conversationDiv);
+};
+
 const renderListOfContacts = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, anchorElement: HTMLElement, listItems: PopulatedConversationWithId[] | UserWithId[]) => {
   anchorElement.innerHTML = "";
   listItems.forEach((item) => {
-    let contact: UserWithId;
-    let lastMessageContent = "";
-    let date = "";
-    if (isPopulatedConversation(item)) {
-      const [other] = item.participants.filter((p) => p._id !== globalState.user?._id);
-      contact = other;
-      lastMessageContent = item.lastMessage ?? "";
-      date = setDateLabel(item.date || new Date());
-    } else {
-      contact = item;
-    }
-    const conversationDiv = document.createElement("div");
-    conversationDiv.setAttribute("data-conversationid", item._id.toString());
-    conversationDiv.classList.add("list-group-item", "list-item", "contact");
-    conversationDiv.innerHTML = `
-    <img class="avatar" src="${contact.photo || "/images/avatar1.png"}" alt="profile avatar" />
-    <div>
-    <div class="conversation-first-line">
-    <h3 class="conversation-name">${contact.full_name}</h3>
-    ${isPopulatedConversation(item) && item.date ? ` <div class="conversation-date">${date === "Today" ? getHourFromDate(new Date(item.date)) : date}</div>  ` : ""}
-    </div>
-      ${
-        lastMessageContent
-          ? `<p class="last-message">
-        <span>
-        ${isPopulatedConversation(item) && item.author === globalState.user?._id ? `<i data-conversationId="${item.lastMessageId}" class="bi bi-${item.status === "sent" ? "check2" : "check2-all"} msg-check ${item.status === "read" && "msg-read"}"></i>` : ""}
-        </span>
-        ${lastMessageContent}
-        </p>`
-          : ""
-      }
-    </div>
-    `;
-    conversationDiv.addEventListener("click", () => socketEventsHelpers.openConversation(socket, contact));
-    anchorElement.appendChild(conversationDiv);
+    renderContact(socket, item, anchorElement);
   });
 };
 
-const sortSingleConversation = (conversationId: GeneralId) => {
-  const conversation = document.querySelector(`.conversations .contact[data-conversationid="${conversationId}"]`) as HTMLDivElement;
-  console.log(conversation);
-  conversation.remove();
-  conversationsContainer.prepend(conversation);
+const sortSingleConversation = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, conversation: PopulatedConversationWithId) => {
+  const conversationDiv = document.querySelector(`.conversations .contact[data-conversationid="${conversation._id}"]`);
+  if (conversationDiv) {
+    conversationDiv.remove();
+    conversationsContainer.prepend(conversationDiv);
+  } else {
+    renderContact(socket, conversation, conversationsContainer, true);
+  }
 };
 
 const closeContactsList = () => {

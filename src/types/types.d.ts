@@ -44,6 +44,8 @@ export interface MessageWithId extends Message {
 
 export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: GeneralId[]; lastMessage: string; lastMessageId: GeneralId };
 
+export type ConversationWithId = Conversation & { _id: GeneralId };
+
 export interface PopulatedConversation extends Conversation {
   participants: UserWithId[];
 }

@@ -50,21 +50,15 @@ if (globalState?.user?._id) {
 
 //listeners
 
-//me falta arreglar el sortconversations cuando se envia un mensaje
 socket.on("sendConversations", ({ payload }) => {
-  console.log("estoy ejecutando sendConversations");
   globalState.conversations = [...payload];
   sortConversations();
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 socket.on("sendConversation", ({ payload }) => {
-  console.log("entro aca");
   const conversationExists = globalState.conversations.some((c) => payload._id === c._id);
   if (!conversationExists) globalState.conversations.push(payload);
-  console.log("primer id", globalState.conversations[0]._id);
-  sortConversations();
-  console.log("segundo  id", globalState.conversations[0]._id);
-  renderHandlers.sortSingleConversation(globalState.conversations[0]._id);
+  renderHandlers.sortSingleConversation(socket, payload);
 });
 
 socket.on("sendMessage", (message) => {
@@ -79,11 +73,6 @@ socket.on("sendMessage", (message) => {
     top: messagesSection.scrollHeight,
     behavior: "smooth",
   });
-  // socket.emit("getConversations", { userId: globalState.user._id });
-  // const prevConversationId = globalState.conversations[0]._id.toString();
-  // sortConversations();
-  // const nextConversationId = globalState.conversations[0]._id.toString();
-  // if (prevConversationId !== nextConversationId) renderHandlers.sortSingleConversation(globalState.conversations[0]._id);
 });
 
 socket.on("updateMessageStatus", ({ message, status }) => {
