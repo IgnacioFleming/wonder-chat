@@ -1,8 +1,53 @@
-<aside>
+<div class="mainContainer">
 
-</aside>
-<section>
-  <div>adfasdf </div>
-</section>
+  <aside class="sidebar">
+
+    <header class="header">
+      <h2>Chats</h2>
+      <div>
+        <i class="bi bi-chat-right-text" style="font-size: 24px;"></i>
+        <i class="bi bi-three-dots-vertical" style="font-size: 24px;"></i>
+      </div>
+    </header>
+
+    <div class="filters">
+      <div class="search-conversations">
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Search" />
+        <i class="bi bi-search search-icon"></i>
+      </div>
+      <div class="toggles-container">
+
+        <input type="radio" class="btn-check" name="options" id="opt-all" autocomplete="off" checked />
+        <label class="btn custom-toggle" for="opt-all">All</label>
+
+        <input type="radio" class="btn-check" name="options" id="opt-unread" autocomplete="off" />
+        <label class="btn custom-toggle" for="opt-unread">Unread</label>
+
+        <input type="radio" class="btn-check" name="options" id="opt-favorites" autocomplete="off" />
+        <label class="btn custom-toggle" for="opt-favorites">Favorites</label>
+
+        <input type="radio" class="btn-check" name="options" id="opt-groups" autocomplete="off" />
+        <label class="btn custom-toggle" for="opt-groups">Groups</label>
+      </div>
+    </div>
+
+    <div class="conversations list-group list-group-flush">
+      <div class="list-group-item conversation-item">
+
+        <img src="/images/avatar1.png" alt="" />
+        <p>Pepito</p>
+      </div>
+      <div class="list-group-item conversation-item">
+
+        <img src="/images/avatar1.png" alt="" />
+        <p>Pepito</p>
+      </div>
+    </div>
+
+  </aside>
+
+  <section class="conversation"></section>
+
+</div>
 <script src="/socket.io/socket.io.js"></script>
 <script type="module" src="/ts/home.js"></script>
