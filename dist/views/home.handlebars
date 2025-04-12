@@ -2,11 +2,11 @@
 
   <aside class="sidebar">
 
-    <header class="header">
-      <h2>Chats</h2>
+    <header>
+      <h3>Chats</h3>
       <div>
-        <i class="bi bi-chat-right-text" style="font-size: 24px;"></i>
-        <i class="bi bi-three-dots-vertical" style="font-size: 24px;"></i>
+        <i class="bi bi-chat-right-text pointer" style="font-size: 24px;"></i>
+        <i class="bi bi-three-dots-vertical pointer" style="font-size: 24px;"></i>
       </div>
     </header>
 
@@ -32,21 +32,51 @@
     </div>
 
     <div class="conversations list-group list-group-flush">
-      <div class="list-group-item conversation-item">
+      <div class="list-group-item list-item">
 
-        <img src="/images/avatar1.png" alt="" />
+        <img class="avatar" src="/images/avatar1.png" alt="" />
         <p>Pepito</p>
       </div>
-      <div class="list-group-item conversation-item">
+      <div class="list-group-item list-item">
 
-        <img src="/images/avatar1.png" alt="" />
+        <img class="avatar" src="/images/avatar1.png" alt="" />
         <p>Pepito</p>
+      </div>
+      <div class="list-group-item list-item">
+
+        <img class="avatar" src="/images/avatar1.png" alt="" />
+        <p>{{contacts}}</p>
       </div>
     </div>
 
   </aside>
 
-  <section class="conversation"></section>
+  <section class="conversation">
+    <header>
+      <div class="list-item">
+        <img class="avatar" src="/images/avatar1.png" alt="photo" />
+        <p>Pepito</p>
+      </div>
+      <i class="bi bi-search pointer" style="font-size: 20px;"></i>
+      <i class="bi bi-three-dots-vertical pointer" style="font-size: 24px;"></i>
+    </header>
+    <section class="messages">
+      <p class="message sent">Hola amigo, como estas?</p>
+      <p class="message sent">Necesitaba que me des una mano con algo, el tema es asi. Necesito que vayas a buscar una mesa a la casa de un conocido que pasaba por la plaza de mi casa la mañana que el cerro tenía la punta nevada.</p>
+      <p class="message">Todo bien y vos?</p>
+      <p class="message">Dale amigo ahi voy a buscarlo, gracias maquina</p>
+    </section>
+    <footer>
+      <i class="bi bi-plus pointer" style="font-size: 45px;"></i>
+      <div class="message-input">
+        <button type="button" class="btn input-emoji pointer">
+          <i class="bi bi-emoji-smile" style="font-size: 24px;"></i>
+        </button>
+        <textarea class="form-control form-control-lg" type="text" placeholder="Write a message" aria-label=".form-control-lg example" rows="1"></textarea>
+      </div>
+      <i class="bi bi-mic-fill pointer" style="font-size: 30px;"></i>
+    </footer>
+  </section>
 
 </div>
 <script src="/socket.io/socket.io.js"></script>

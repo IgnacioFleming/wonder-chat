@@ -4,9 +4,16 @@ export default class UserDAO {
     static async getAll() {
         try {
             const users = await userModel.find();
-            if (!users)
-                return { status: STATUS_TYPES.NOT_FOUND, error: "User not found." };
             return { status: STATUS_TYPES.SUCCESS, payload: users };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    static async getContacts(id) {
+        try {
+            const contacts = await userModel.find({ _id: { $ne: id } });
+            return { status: STATUS_TYPES.SUCCESS, payload: contacts };
         }
         catch (error) {
             throw error;
