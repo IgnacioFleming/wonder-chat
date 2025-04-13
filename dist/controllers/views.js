@@ -1,9 +1,6 @@
-import UserDAO from "../dao/mongoDB/users.js";
 export default class ViewsController {
     static home = async (req, res, next) => {
-        const user = req.user;
-        const contacts = (await UserDAO.getContacts(user?._id.toString())).payload;
-        res.render("home", { style: "home.css", contacts });
+        res.render("home", { style: "home.css" });
     };
     static login = async (req, res, next) => {
         res.render("login", { style: "auth.css" });

@@ -5,7 +5,10 @@ type GlobalState = {
   selectedContact: Omit<UserWithId, "password"> | null;
 };
 
+const persistedUser = localStorage.getItem("user");
+const persistedContact = localStorage.getItem("selectedContact");
+
 export const GlobalState: GlobalState = {
-  user: JSON.parse(localStorage.getItem("user") || "") || null,
-  selectedContact: null, //tengo que agregar localStorage
+  user: persistedUser ? JSON.parse(persistedUser) : null,
+  selectedContact: persistedContact ? JSON.parse(persistedContact) : null,
 };
