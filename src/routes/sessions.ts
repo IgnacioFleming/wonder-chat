@@ -10,6 +10,7 @@ router.post("/register", passport.authenticate(STRATEGIES.REGISTER, { session: f
 router.post("/login", passport.authenticate(STRATEGIES.LOGIN, { session: true }), SessionsController.login);
 
 router.get("/current", auth, (req, res) => {
+  console.log(req.session);
   res.send("Authorized");
 });
 
