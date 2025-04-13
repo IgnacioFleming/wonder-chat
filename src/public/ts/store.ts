@@ -7,5 +7,5 @@ type GlobalState = {
 
 export const GlobalState: GlobalState = {
   user: JSON.parse(localStorage.getItem("user") || "") || null,
-  selectedContact: JSON.parse(localStorage.getItem("contact") || "") || null,
+  selectedContact: null, //tengo que agregar localStorage
 };
