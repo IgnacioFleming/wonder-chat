@@ -1,19 +1,7 @@
 import mongoose from "mongoose";
 const userCollection = "users";
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-    },
-    first_name: {
-        type: String,
-        required: true,
-    },
-    last_name: {
-        type: String,
-        required: true,
-    },
-    email: {
+    full_name: {
         type: String,
         required: true,
         unique: true,
@@ -31,6 +19,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: Date(),
     },
-    is_online: Boolean,
+    is_online: {
+        type: Boolean,
+        default: false,
+    },
 });
 export const userModel = mongoose.model(userCollection, userSchema);

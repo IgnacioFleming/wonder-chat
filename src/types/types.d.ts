@@ -6,15 +6,12 @@ export type ObjectId = Types.ObjectId;
 
 export type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
-export type Response = (res: Response, payload?: Object, error?: string | { name: string; message: string }) => void;
+export type Response = (res: Response, payload?: Object | string, error?: string | { name: string; message: string }) => void;
 
 export type ErrorMiddleware = (err: Errback, req: Request, res: Response, next?: NextFunction) => void;
 
 export interface User {
-  username: string;
-  first_name: string;
-  last_name: string;
-  email: string;
+  full_name: string;
   password: string;
   photo?: string;
   signup_date?: typeof Date;
