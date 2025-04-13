@@ -96,12 +96,15 @@ input[type="radio"].btn-check:checked + .custom-toggle {
 }
 
 .conversation header {
-  background-color: var(--main-blue);
   display: flex;
   align-items: center;
   color: var(--white);
   height: 80px;
   padding: 20px;
+}
+
+.conversation header.hasMessages {
+  background-color: var(--main-blue);
 }
 
 .avatar {
@@ -182,4 +185,23 @@ input[type="radio"].btn-check:checked + .custom-toggle {
 
 .pointer {
   cursor: pointer;
+}
+
+.contact {
+  cursor: pointer;
+}
+.contact:hover {
+  background-color: var(--main-gray);
+}
+
+.conversations .contact .conversation-name {
+  font-weight: 400;
+  font-size: larger;
+  margin: 0;
+}
+
+.conversations .contact .last-message {
+  font-size: small;
+  color: var(--dark-gray);
+  font-weight: 400;
 }

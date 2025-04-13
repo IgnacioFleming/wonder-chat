@@ -1,13 +1,13 @@
 import { UpdateWriteOpResult } from "mongoose";
 import { conversationSchema } from "../../schemas/conversations.ts";
 import { PersistResult } from "../../types/DAO.js";
-import { Conversation, LastMessage, Message, ObjectId } from "../../types/types.js";
+import { Conversation, LastMessage, Message, ObjectId, PopulatedConversation } from "../../types/types.js";
 import { conversationModel } from "../models/conversations.ts";
 import { STATUSES } from "../../types/enums.js";
 
 export default class ConversationDAO {
-  static async getAllByUserId(id: ObjectId): Promise<PersistResult<Conversation>> {
-    const conversations = await conversationModel.find({ participants: id }).lean<Conversation>();
+  static async getAllByUserId(id: ObjectId): Promise<PersistResult<PopulatedConversation>> {
+    const conversations = await conversationModel.find({ participants: id }).populate("participants").lean<PopulatedConversation>();
     return { status: STATUSES.SUCCESS, payload: conversations };
   }
   static async getByParticipants(participants: ObjectId[]): Promise<PersistResult<Conversation>> {
@@ -16,7 +16,6 @@ export default class ConversationDAO {
     return { status: STATUSES.SUCCESS, payload: conversation };
   }
   static async create(conversation: Conversation): Promise<PersistResult<Conversation>> {
-    console.log("esta es la conversacion", conversation);
     const { success, data, error } = conversationSchema.safeParse(conversation);
     if (!success) return { status: STATUSES.ERROR, error };
 
