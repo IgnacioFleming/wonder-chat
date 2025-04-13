@@ -23,6 +23,8 @@ export interface UserWithId extends User {
   _id: ObjectId;
 }
 
+export type AuthUser = Pick<User, "full_name" | "password">;
+
 export interface Message {
   author: ObjectId;
   content: string;
