@@ -12,6 +12,8 @@ import { reloadClient } from "./config/livereload.ts";
 import contactsRouter from "./routes/contacts.ts";
 import sessionsRouter from "./routes/sessions.ts";
 import { initializePassport } from "./auth/passport.ts";
+import session from "express-session";
+import passport from "passport";
 
 const app = express();
 export const server = createServer(app);
@@ -24,7 +26,9 @@ app.use(express.static(__dirname + "/dist/public"));
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/dist/views");
-
+app.use(session({ secret: config.secret, resave: false, saveUninitialized: false, cookie: { httpOnly: true, maxAge: 30 * 24 * 3600 * 1000, sameSite: "strict" } }));
+app.use(passport.initialize());
+app.use(passport.session());
 initializePassport();
 
 app.use("/api/users", usersRouter);
