@@ -12,7 +12,7 @@ export default class UserDAO {
     }
     static async getContacts(id) {
         try {
-            const contacts = await userModel.find({ _id: { $ne: id } });
+            const contacts = await userModel.find({ _id: { $ne: id } }).lean();
             return { status: STATUS_TYPES.SUCCESS, payload: contacts };
         }
         catch (error) {

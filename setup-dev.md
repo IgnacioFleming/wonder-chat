@@ -31,7 +31,7 @@ npm install --save-dev chokidar-cli livereload connect-livereload cpy-cli concur
 
 ```json
 "scripts": {
-  "copyFiles": "npx cpy \"src/public/css/**/*\" \"dist/public/css\" && npx cpy \"src/views/**/*\" \"dist/views\"",
+  "copyFiles": "mkdir dist\\public && mkdir dist\\views && xcopy src\\public dist\\public /E /I /Y && xcopy src\\views dist\\views /E /I /Y",
 
   "watch": "concurrently -n \"TSC,COPY\" -c \"cyan,magenta\" \"tsc --watch\" \"npx chokidar \\\"src/public/**/*\\\" \\\"src/views/**/*\\\" -c \\\"npm run copyFiles\\\"\"",
 
@@ -129,4 +129,46 @@ O directamente asegurate de no estar corriendo `livereload` tanto desde el scrip
 
 ---
 
-¡Listo! Tenés un entorno de desarrollo con hot reload, build automatizado, recarga de navegador y reinicio de servidor sin tocar nada más 💥
+## ⚙️ Socket.IO – Manejo de usuarios conectados
+
+Para asociar usuarios con sus `socket.id` y permitir enviar mensajes entre ellos, se usa:
+
+```ts
+const userSocketMap = new Map<string, string>(); // userId -> socket.id
+```
+
+Esto se guarda en memoria para saber qué socket le corresponde a cada usuario. Cuando alguien se conecta:
+
+```ts
+socket.on("register", (userId) => {
+  userSocketMap.set(userId, socket.id);
+});
+```
+
+Y para enviar un mensaje a otro usuario:
+
+```ts
+const receiverSocketId = userSocketMap.get(message.receiver);
+if (receiverSocketId) {
+  io.to(receiverSocketId).emit("sendMessage", message);
+}
+```
+
+### ✅ ¿Es buena práctica usar `Map`?
+
+Sí, siempre que:
+
+- Tengas 1 sola instancia del servidor (como en Railway sin escalado horizontal)
+- La app tenga menos de 200 usuarios concurrentes
+- No necesites persistencia si se cae el server
+
+```ts
+// En producción usamos Map porque la app corre en una sola instancia (Railway sin escalado).
+// Si se escalara horizontalmente, reemplazar por Redis.
+```
+
+Para apps más grandes o con múltiples instancias, se recomienda usar Redis para compartir los socket.id entre instancias del servidor.
+
+---
+
+¡Listo! Tenés un entorno de desarrollo con hot reload, build automatizado, recarga de navegador y lógica de socket optimizada para producción en Railway 🚀

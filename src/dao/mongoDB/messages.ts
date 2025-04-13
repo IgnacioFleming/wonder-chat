@@ -1,5 +1,4 @@
-import { ObjectId } from "mongoose";
-import type { Message } from "../../types/types.d.ts";
+import type { Message, ObjectId } from "../../types/types.d.ts";
 import { STATUS_TYPES } from "../../utils/status.ts";
 import { messageModel } from "../models/messages.ts";
 import ConversationDAO from "./conversations.ts";
@@ -23,9 +22,13 @@ export default class MessageDAO {
       throw error;
     }
   }
-  static async getUserMessagesById(id: ObjectId) {
+  static async getUserMessagesById(userId: ObjectId, contactId: ObjectId) {
+    console.log("userId ", userId);
+    console.log("contactId ", contactId);
     try {
-      const messages = await messageModel.find({ receiver: id });
+      const messages = await messageModel.find({
+        $or: [{ $and: [{ author: userId }, { receiver: contactId }] }, { $and: [{ author: contactId }, { receiver: userId }] }],
+      });
       return { status: STATUS_TYPES.SUCCESS, payload: messages };
     } catch (error) {
       throw error;

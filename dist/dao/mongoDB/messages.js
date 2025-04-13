@@ -24,9 +24,13 @@ export default class MessageDAO {
             throw error;
         }
     }
-    static async getUserMessagesById(id) {
+    static async getUserMessagesById(userId, contactId) {
+        console.log("userId ", userId);
+        console.log("contactId ", contactId);
         try {
-            const messages = await messageModel.find({ receiver: id });
+            const messages = await messageModel.find({
+                $or: [{ $and: [{ author: userId }, { receiver: contactId }] }, { $and: [{ author: contactId }, { receiver: userId }] }],
+            });
             return { status: STATUS_TYPES.SUCCESS, payload: messages };
         }
         catch (error) {

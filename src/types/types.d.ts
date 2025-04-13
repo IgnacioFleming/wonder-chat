@@ -1,8 +1,8 @@
 import { Errback, ErrorRequestHandler, NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import { STATUS_TYPES } from "../utils/status.ts";
 
-export type ObjectId = mongoose.Types.ObjectId;
+export type ObjectId = Types.ObjectId;
 
 export type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
@@ -31,9 +31,19 @@ export interface Message {
   isRead?: boolean;
 }
 
+export interface ClientMessage extends Message {
+  author: string;
+  receiver: string;
+}
+
 type LastMessage = Omit<Message, "isSent" | "receiver">;
 
 export interface Conversation {
   participants: ObjectId[];
   lastMessage: LastMessage;
+}
+
+export interface GetMessagesParams {
+  userId: string;
+  contactId: string;
 }

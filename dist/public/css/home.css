@@ -133,6 +133,10 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   align-items: flex-start;
   background-color: var(--main-gray);
   gap: 5px;
+  height: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
 .conversation .messages .message {
