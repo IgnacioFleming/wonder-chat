@@ -1,51 +1,52 @@
+import { UpdateWriteOpResult } from "mongoose";
+import { PersistResult } from "../../types/DAO.js";
 import type { Message, ObjectId } from "../../types/types.d.ts";
-import { STATUS_TYPES } from "../../utils/status.ts";
 import { messageModel } from "../models/messages.ts";
 import ConversationDAO from "./conversations.ts";
+import { STATUSES } from "../../types/enums.js";
 
 export default class MessageDAO {
-  static async getAll() {
+  static async getAll(): Promise<PersistResult<Message[]>> {
     try {
-      const messages = await messageModel.find();
-      if (!messages) return { status: STATUS_TYPES.NOT_FOUND, error: "Messages not found." };
-      return { status: STATUS_TYPES.SUCCESS, payload: messages };
+      const messages = await messageModel.find().lean<Message[]>();
+      return { status: STATUSES.SUCCESS, payload: messages };
     } catch (error) {
       throw error;
     }
   }
-  static async getById(id: ObjectId) {
+  static async getById(id: ObjectId): Promise<PersistResult<Message>> {
     try {
-      const message = await messageModel.findById(id);
-      if (!message?.id) return { status: STATUS_TYPES.NOT_FOUND, error: "Message not found." };
-      return { status: STATUS_TYPES.SUCCESS, payload: message };
+      const message = await messageModel.findById(id).lean<Message>();
+      if (!message?.author) return { status: STATUSES.ERROR, error: "Message not found." };
+      return { status: STATUSES.SUCCESS, payload: message };
     } catch (error) {
       throw error;
     }
   }
-  static async getUserMessagesById(userId: ObjectId, contactId: ObjectId) {
-    console.log("userId ", userId);
-    console.log("contactId ", contactId);
+  static async getUserMessagesById(userId: ObjectId, contactId: ObjectId): Promise<PersistResult<Message[]>> {
     try {
-      const messages = await messageModel.find({
-        $or: [{ $and: [{ author: userId }, { receiver: contactId }] }, { $and: [{ author: contactId }, { receiver: userId }] }],
-      });
-      return { status: STATUS_TYPES.SUCCESS, payload: messages };
+      const messages = await messageModel
+        .find({
+          $or: [{ $and: [{ author: userId }, { receiver: contactId }] }, { $and: [{ author: contactId }, { receiver: userId }] }],
+        })
+        .lean<Message[]>();
+      return { status: STATUSES.SUCCESS, payload: messages };
     } catch (error) {
       throw error;
     }
   }
-  static async create(body: Message) {
+  static async create(body: Message): Promise<PersistResult<Message>> {
     try {
       const message = await messageModel.create(body);
-      if (!message?.id) return { status: STATUS_TYPES.ERROR, error: "Message could not been created" };
+      if (!message?.id) return { status: STATUSES.ERROR, error: "Message could not been created" };
       await ConversationDAO.replaceLastMessage([body.author, body.receiver], { author: body.author, content: body.content });
-      return { status: STATUS_TYPES.SUCCESS, payload: message };
+      return { status: STATUSES.SUCCESS, payload: body };
     } catch (error) {
       throw error;
     }
   }
-  static async markRead(id: ObjectId) {
+  static async markRead(id: ObjectId): Promise<PersistResult<UpdateWriteOpResult>> {
     const update = await messageModel.updateOne({ _id: id }, { $set: { isRead: true } });
-    return { status: "success", payload: update };
+    return { status: STATUSES.SUCCESS, payload: update };
   }
 }

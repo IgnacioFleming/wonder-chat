@@ -1,6 +1,5 @@
 import UserDAO from "../dao/mongoDB/users.js";
 import responses from "../utils/responses.js";
-import { STATUS_TYPES } from "../utils/status.js";
 export default class UserController {
     static getAll = async (req, res, next) => {
         try {
@@ -15,8 +14,8 @@ export default class UserController {
         try {
             const { id } = req.params;
             const { status, payload, error } = await UserDAO.getbyId(id);
-            if (status === STATUS_TYPES.NOT_FOUND)
-                return responses.notFoundResponse(res, { error });
+            if (status === "error" /* STATUSES.ERROR */)
+                return responses.errorResponse(res, { error });
             responses.successResponse(res, payload);
         }
         catch (error) {
@@ -27,8 +26,8 @@ export default class UserController {
         try {
             const { body } = req;
             const { status, payload, error } = await UserDAO.create(body);
-            if (status === STATUS_TYPES.NOT_FOUND)
-                return responses.notFoundResponse(res, { error });
+            if (status === "error" /* STATUSES.ERROR */)
+                return responses.errorResponse(res, { error });
             responses.successResponse(res, payload);
         }
         catch (error) {

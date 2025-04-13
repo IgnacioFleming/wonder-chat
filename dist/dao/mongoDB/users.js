@@ -1,10 +1,9 @@
-import { STATUS_TYPES } from "../../utils/status.js";
 import { userModel } from "../models/users.js";
 export default class UserDAO {
     static async getAll() {
         try {
-            const users = await userModel.find();
-            return { status: STATUS_TYPES.SUCCESS, payload: users };
+            const users = await userModel.find().lean();
+            return { status: "success" /* STATUSES.SUCCESS */, payload: users };
         }
         catch (error) {
             throw error;
@@ -13,7 +12,7 @@ export default class UserDAO {
     static async getContacts(id) {
         try {
             const contacts = await userModel.find({ _id: { $ne: id } }).lean();
-            return { status: STATUS_TYPES.SUCCESS, payload: contacts };
+            return { status: "success" /* STATUSES.SUCCESS */, payload: contacts };
         }
         catch (error) {
             throw error;
@@ -21,10 +20,10 @@ export default class UserDAO {
     }
     static async getbyId(id) {
         try {
-            const user = await userModel.findById(id);
-            if (!user?.id)
-                return { status: STATUS_TYPES.NOT_FOUND, error: "User not found." };
-            return { status: STATUS_TYPES.SUCCESS, payload: user };
+            const user = await userModel.findById(id).lean();
+            if (!user?.username)
+                return { status: "error" /* STATUSES.ERROR */, error: "User not found." };
+            return { status: "success" /* STATUSES.SUCCESS */, payload: user };
         }
         catch (error) {
             throw error;
@@ -32,10 +31,10 @@ export default class UserDAO {
     }
     static async create(body) {
         try {
-            const user = await userModel.create(body);
-            if (!user?.id)
-                return { status: STATUS_TYPES.NOT_FOUND, error: "User not found." };
-            return { status: STATUS_TYPES.SUCCESS, payload: user };
+            const result = await userModel.create(body);
+            if (!result?._id)
+                return { status: "error" /* STATUSES.ERROR */, error: "User not found." };
+            return { status: "success" /* STATUSES.SUCCESS */, payload: body };
         }
         catch (error) {
             throw error;
