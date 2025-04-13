@@ -1,5 +1,6 @@
-import { ClientMessage, ObjectId, PopulatedConversation, UserWithId } from "../../types/types.js";
+import { ClientMessage, PopulatedConversation, UserWithId } from "../../types/types.js";
 import helpers from "./helpers.ts";
+import { GlobalState } from "./store.ts";
 
 declare global {
   interface Window {
@@ -7,10 +8,9 @@ declare global {
   }
 }
 
-const user: Omit<UserWithId, "password"> = JSON.parse(localStorage.getItem("user") || "{}");
-if (!user?._id) window.location.href = "/login";
-const userId: ObjectId = user._id;
-const contactId = "67c21a97ef46abfc1c2785bd";
+if (!GlobalState.user || !GlobalState.user._id) window.location.href = "/login";
+const userId = GlobalState.user?._id;
+let contactId = GlobalState.selectedContact?._id;
 const newMessageInput = document.getElementById("newMessage") as HTMLTextAreaElement;
 
 const socket = window.io();
@@ -34,26 +34,33 @@ socket.on("getConversations", ({ payload }: { payload: PopulatedConversation[] }
     conversationsContainer.appendChild(conversationDiv);
   });
 });
-
+//refactorizar para renderizar los mensajes de acuerdo a un cambio de estado
 function openConversation(contact: UserWithId) {
+  if (!userId) return;
+  GlobalState.selectedContact = contact;
   helpers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
   socket.emit("getMessages", { userId, contactId: contact._id });
   socket.on("sendMessages", (result: ClientMessage[]) => {
     if (result.length > 0) return helpers.renderMessages(result, userId.toString());
   });
+  contactId = contact._id;
 }
 
-socket.on("sendMessage", ({ payload }: { payload: ClientMessage }) => {
-  const messagesSection = document.querySelector("section.messages") as HTMLElement;
-  helpers.renderSingleMessage(payload, userId.toString(), messagesSection);
-  messagesSection.scrollTop = messagesSection.scrollHeight;
-});
-
-newMessageInput.addEventListener("keydown", (e: KeyboardEvent) => {
+function sendMessage(e: KeyboardEvent) {
+  if (!userId) return;
   if (e.key !== "Enter") return;
   e.preventDefault();
   const content = newMessageInput.value.trim();
   if (!content) return;
-  helpers.sendMessage(socket, { author: userId.toString(), receiver: contactId, content });
+  helpers.sendMessage(socket, { author: userId.toString(), receiver: contactId?.toString() || "", content });
   newMessageInput.value = "";
+}
+
+socket.on("sendMessage", (message: ClientMessage) => {
+  if (!userId) return;
+  const messagesSection = document.querySelector("section.messages") as HTMLElement;
+  helpers.renderSingleMessage(message, userId.toString(), messagesSection);
+  messagesSection.scrollTop = messagesSection.scrollHeight;
 });
+
+newMessageInput.addEventListener("keydown", sendMessage);

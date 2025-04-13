@@ -1,9 +1,9 @@
 import helpers from "./helpers.js";
-const user = JSON.parse(localStorage.getItem("user") || "{}");
-if (!user?._id)
+import { GlobalState } from "./store.js";
+if (!GlobalState.user || !GlobalState.user._id)
     window.location.href = "/login";
-const userId = user._id;
-const contactId = "67c21a97ef46abfc1c2785bd";
+const userId = GlobalState.user?._id;
+let contactId = GlobalState.selectedContact?._id;
 const newMessageInput = document.getElementById("newMessage");
 const socket = window.io();
 socket.emit("register", userId);
@@ -25,26 +25,36 @@ socket.on("getConversations", ({ payload }) => {
         conversationsContainer.appendChild(conversationDiv);
     });
 });
+//refactorizar para renderizar los mensajes de acuerdo a un cambio de estado
 function openConversation(contact) {
+    if (!userId)
+        return;
+    GlobalState.selectedContact = contact;
     helpers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
     socket.emit("getMessages", { userId, contactId: contact._id });
     socket.on("sendMessages", (result) => {
         if (result.length > 0)
             return helpers.renderMessages(result, userId.toString());
     });
+    contactId = contact._id;
 }
-socket.on("sendMessage", ({ payload }) => {
-    const messagesSection = document.querySelector("section.messages");
-    helpers.renderSingleMessage(payload, userId.toString(), messagesSection);
-    messagesSection.scrollTop = messagesSection.scrollHeight;
-});
-newMessageInput.addEventListener("keydown", (e) => {
+function sendMessage(e) {
+    if (!userId)
+        return;
     if (e.key !== "Enter")
         return;
     e.preventDefault();
     const content = newMessageInput.value.trim();
     if (!content)
         return;
-    helpers.sendMessage(socket, { author: userId.toString(), receiver: contactId, content });
+    helpers.sendMessage(socket, { author: userId.toString(), receiver: contactId?.toString() || "", content });
     newMessageInput.value = "";
+}
+socket.on("sendMessage", (message) => {
+    if (!userId)
+        return;
+    const messagesSection = document.querySelector("section.messages");
+    helpers.renderSingleMessage(message, userId.toString(), messagesSection);
+    messagesSection.scrollTop = messagesSection.scrollHeight;
 });
+newMessageInput.addEventListener("keydown", sendMessage);
