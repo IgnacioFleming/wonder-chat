@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { ClientMessage, PopulatedConversation, UserWithId } from "../../types/types.js";
 import { GlobalState } from "./store.ts";
+import { allContactsSection } from "./home.ts";
 
 const userId = GlobalState.user?._id;
 
@@ -18,6 +19,16 @@ const openConversation = (socket: Socket, contact: Omit<UserWithId, "password">)
   });
 };
 
+const sendMessage = (e: KeyboardEvent, socket: Socket, newMessageInput: HTMLTextAreaElement) => {
+  if (!userId) return;
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  const content = newMessageInput.value.trim();
+  if (!content) return;
+  socket.emit("newMessage", { author: userId.toString(), receiver: GlobalState.selectedContact?._id?.toString() || "", content });
+  newMessageInput.value = "";
+};
+
 const renderMessages = (messages: ClientMessage[], senderId: string) => {
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
   messagesSection.innerHTML = "";
@@ -30,10 +41,6 @@ const renderSingleMessage = (message: ClientMessage, senderId: string, target: H
   paragraph.className = "message";
   if (message.author === senderId) paragraph.classList.add("sent");
   target.appendChild(paragraph);
-};
-
-const sendMessage = async (socket: Socket, message: ClientMessage) => {
-  socket.emit("newMessage", message);
 };
 
 const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_name" | "photo">) => {
@@ -50,6 +57,7 @@ const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_n
 };
 
 const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
+  if (allContactsSection.classList.contains("block")) closeContactsList();
   GlobalState.selectedContact = selectedContact;
   return localStorage.setItem("selectedContact", JSON.stringify(selectedContact));
 };
@@ -85,4 +93,12 @@ const renderListOfContacts = (socket: Socket, anchorElement: HTMLElement, payloa
   });
 };
 
-export default { renderMessages, renderSingleMessage, renderConversationHeader, sendMessage, setSelectedContact, setUser, renderListOfContacts };
+const closeContactsList = () => {
+  allContactsSection.classList.add("close");
+  setTimeout(() => {
+    allContactsSection.classList.replace("block", "hidden");
+    allContactsSection.classList.remove("close");
+  }, 270);
+};
+
+export default { renderMessages, renderSingleMessage, renderConversationHeader, sendMessage, setSelectedContact, setUser, renderListOfContacts, closeContactsList };
