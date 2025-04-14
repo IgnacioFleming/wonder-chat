@@ -1,4 +1,4 @@
-import { PopulatedConversationWithId, User, UserWithId } from "../../../types/types.js";
+import { GeneralId, PopulatedConversationWithId, User, UserWithId } from "../../../types/types.js";
 import { globalState } from "../store.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 
@@ -63,3 +63,11 @@ export function debounce<T extends (...args: any[]) => void>(fn: T, delay = 300)
     timeoutId = setTimeout(() => fn(...args), delay);
   };
 }
+
+export const markConversationRead = (userId: GeneralId, contactId: GeneralId) => {
+  const conversation = globalState.conversations.find((c) => {
+    const ids = c.participants.map((c) => c._id);
+    return ids.includes(userId) && ids.includes(contactId);
+  });
+  if (conversation) conversation.status = "read";
+};

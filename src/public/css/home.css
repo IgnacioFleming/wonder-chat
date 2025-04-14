@@ -39,6 +39,26 @@
   flex-grow: 1;
 }
 
+.sidebar .contacts-header {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: auto;
+  gap: 10px;
+  height: 80px;
+}
+.sidebar .contacts-header h3 {
+  flex-grow: 0;
+}
+
+.sidebar .contacts-header .back {
+  display: flex;
+  justify-content: flex-start;
+  align-self: flex-start;
+  gap: 20px;
+  width: fit-content;
+}
+
 .sidebar #contacts {
   position: absolute;
   background-color: var(--white);
@@ -76,7 +96,7 @@
   }
 }
 
-.sidebar #contacts header {
+.sidebar .search-conversations header {
   display: flex;
   gap: 30px;
   justify-content: flex-start;
@@ -139,7 +159,6 @@ input[type="radio"].btn-check:checked + .custom-toggle {
 
 .list-item {
   display: flex;
-  height: 100%;
   align-items: center;
   gap: 10px;
 }
@@ -183,6 +202,10 @@ p {
   color: var(--white);
   height: 80px;
   padding: 20px;
+}
+.conversation header p {
+  font-size: 24px;
+  font-weight: 400;
 }
 
 .conversation header.hasMessages {
@@ -389,4 +412,28 @@ p {
 
 .conversations .contact .last-message .msg-check {
   font-size: 16px;
+}
+
+.sendButton {
+  background-color: var(--white);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px var(--main-blue) solid;
+  color: var(--main-blue);
+}
+
+.sendButton:hover {
+  background-color: var(--green);
+  border: 1px var(--green) solid;
+  color: var(--white);
+}
+
+.sendButton.disabled,
+.sendButton.disabled:hover {
+  background-color: var(--main-gray);
+  color: var(--dark-gray);
+  border: 1px var(--dark-gray) solid;
+  cursor: auto;
+  opacity: 0.9;
 }

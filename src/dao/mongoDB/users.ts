@@ -14,7 +14,10 @@ export default class UserDAO {
   }
   static async getContacts(id: string): Promise<PersistResult<UserWithId[]>> {
     try {
-      const contacts = await userModel.find({ _id: { $ne: id } }).lean<UserWithId[]>();
+      const contacts = await userModel
+        .find({ _id: { $ne: id } })
+        .sort({ full_name: 1 })
+        .lean<UserWithId[]>();
       return { status: STATUSES.SUCCESS, payload: contacts };
     } catch (error) {
       throw error;
