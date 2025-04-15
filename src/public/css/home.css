@@ -397,17 +397,17 @@ p {
 }
 
 .conversations .contact .last-message {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.conversations .contact .last-message p {
   font-size: 14px;
-  color: var(--dark-gray);
-  font-weight: 400;
+  font-weight: 300;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: flex;
-}
-
-.conversations .contact .last-message span {
-  align-self: center;
-  margin-right: 3px;
+  color: var(--dark-gray);
+  flex-grow: 1;
 }
 
 .conversations .contact .last-message .msg-check {

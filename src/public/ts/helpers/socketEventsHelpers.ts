@@ -21,6 +21,9 @@ const openConversation = (socket: Socket<ServerToClientEvents, ClientToServerEve
   if (!userId || contact._id === globalState.selectedContact.contact?._id) return;
   searchContacts.value = "";
   setSelectedContact(contact);
+  const conversation = globalState.conversations.find((c) => c.participants.some((p) => p._id === contact._id));
+  const badgeElement = document.querySelector(`div[data-conversationid="${conversation?._id}"] .badge`);
+  if (badgeElement) badgeElement.remove();
   messagesSection.innerHTML = "";
   renderHandlers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
   socket.emit("getMessages", { userId, contactId: contact._id });
