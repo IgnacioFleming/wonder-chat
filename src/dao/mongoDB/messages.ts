@@ -39,7 +39,7 @@ export default class MessageDAO {
     try {
       const message = await messageModel.create(body);
       if (!message?.id) return { status: STATUSES.ERROR, error: "Message could not been created" };
-      await ConversationDAO.replaceLastMessage([body.author, body.receiver], { author: body.author, content: body.content });
+      await ConversationDAO.replaceLastMessage([body.author, body.receiver], body.content);
       return { status: STATUSES.SUCCESS, payload: body };
     } catch (error) {
       throw error;
