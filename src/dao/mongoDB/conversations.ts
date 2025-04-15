@@ -21,7 +21,6 @@ export default class ConversationDAO {
     return { status: STATUSES.SUCCESS, payload: { ...conversation, _id: result.id } };
   }
   static async replaceLastMessage(params: { participants: GeneralId[]; author: GeneralId; lastMessageContent: string; lastMessageId: GeneralId; status: MessageStatus; unreadMessages: number }): Promise<PersistResult<Conversation>> {
-    console.log("reemplazando los unreadmessages", params.unreadMessages);
     const replacedConversation = { lastMessage: params.lastMessageContent, date: new Date(), lastMessageId: params.lastMessageId, status: params.status, author: params.author, unreadMessages: params.unreadMessages };
     await conversationModel.updateOne({ participants: { $all: params.participants } }, { $set: replacedConversation });
     return { status: STATUSES.SUCCESS, payload: { ...replacedConversation, participants: params.participants } };

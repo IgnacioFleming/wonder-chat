@@ -3,6 +3,8 @@ import { Server as HttpServer } from "http";
 import type { ClientToServerEvents, ServerToClientEvents } from "../types/websockets.d.ts";
 import { messagesHandler } from "./events/messagesHandler.ts";
 import { conversationsHandler } from "./events/conversationsHandler.ts";
+import UserDAO from "../dao/mongoDB/users.ts";
+import { GeneralId } from "../types/types.js";
 
 export const userSocketMap = new Map<string, string>();
 export default class SocketManager {
@@ -17,15 +19,19 @@ export default class SocketManager {
 
   connect() {
     this.socketServer.on("connection", (socket) => {
-      socket.on("register", (userId: string) => {
+      socket.on("register", async (userId: string) => {
         userSocketMap.set(userId, socket.id);
+        await UserDAO.updateLastConnection(userId, "online");
         console.log(`User ${userId} conectado con socket ${socket.id}`);
       });
       messagesHandler(socket, this.socketServer);
       conversationsHandler(socket);
-      socket.on("disconnect", () => {
+      socket.on("disconnect", async () => {
         for (const [userId, id] of userSocketMap.entries()) {
-          if (id === socket.id) return userSocketMap.delete(userId);
+          if (id === socket.id) {
+            await UserDAO.updateLastConnection(userId, "offline");
+            return userSocketMap.delete(userId);
+          }
         }
       });
     });
