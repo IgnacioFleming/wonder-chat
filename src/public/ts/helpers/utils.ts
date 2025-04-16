@@ -70,3 +70,12 @@ export const markConversationRead = (userId: GeneralId, contactId: GeneralId) =>
   });
   if (conversation) conversation.status = "read";
 };
+
+export const formatLastConnectionDate = ({ is_online, last_connection }: { is_online: boolean; last_connection: Date | undefined }) => {
+  if (is_online) return "online";
+  if (!last_connection) return "";
+  const day = setDateLabel(last_connection);
+  const hour = getHourFromDate(new Date(last_connection));
+  if (day === "Today") return hour;
+  return `${day} ${hour}`;
+};

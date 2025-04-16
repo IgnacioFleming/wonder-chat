@@ -17,8 +17,8 @@ export interface User {
   full_name: string;
   password: string;
   photo?: string;
-  signup_date?: typeof Date;
-  last_connection?: typeof Date;
+  signup_date?: Date;
+  last_connection?: Date;
   is_online?: boolean;
 }
 

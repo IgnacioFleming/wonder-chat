@@ -7,7 +7,7 @@ import socketEventsHelpers from "./helpers/socketEventsHelpers.ts";
 import { sortConversations } from "./helpers/storeHandlers.ts";
 import { emojis } from "./assets/emojis.ts";
 import { searchHandler } from "./helpers/domHandlers.ts";
-import { debounce } from "./helpers/utils.ts";
+import { debounce, formatLastConnectionDate } from "./helpers/utils.ts";
 import { filterUnreadConversations } from "./helpers/filters.ts";
 
 declare global {
@@ -117,7 +117,13 @@ socket.on("updateMessageStatus", ({ message, status }) => {
   }
 });
 
-socket.on("notifyConnection", (result) => console.log(result));
+socket.on("notifyConnection", ({ is_online, last_connection, userId }) => {
+  if (userId !== globalState.selectedContact.contact?._id.toString()) return;
+  const label = document.getElementById("last_connection_label");
+  if (!label) return;
+  if (is_online) return (label.innerText = "online");
+  label.innerText = `${formatLastConnectionDate({ is_online, last_connection })}`;
+});
 
 //DOM event listeners
 
