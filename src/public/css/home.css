@@ -320,6 +320,17 @@ p {
   width: 100%;
 }
 
+#newMessage {
+  resize: none;
+  overflow-y: auto;
+  max-height: calc(1.5em * 5);
+  line-height: 1.5em;
+  height: auto;
+  border-radius: 15px;
+  padding-right: 10px;
+  scrollbar-width: thin;
+}
+
 .conversation .message-input .input-emoji {
   position: absolute;
   height: 100%;
@@ -350,7 +361,7 @@ p {
 .conversation .message-input #emoji-picker {
   position: absolute;
   top: -150px;
-  left: -60px;
+  left: 0px;
   font-size: 20px;
   width: 300px;
   background-color: var(--white);

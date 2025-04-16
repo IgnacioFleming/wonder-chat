@@ -1,4 +1,5 @@
 import { GeneralId, PopulatedConversationWithId, User, UserWithId } from "../../../types/types.js";
+import { newMessageInput } from "../home.ts";
 import { globalState } from "../store.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 
@@ -78,4 +79,9 @@ export const formatLastConnectionDate = ({ is_online, last_connection }: { is_on
   const hour = getHourFromDate(new Date(last_connection));
   if (day === "Today") return hour;
   return `${day} ${hour}`;
+};
+
+export const resizeMessageInput = () => {
+  newMessageInput.style.height = "auto";
+  newMessageInput.style.height = `${newMessageInput.scrollHeight}px`;
 };

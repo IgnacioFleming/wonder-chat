@@ -7,7 +7,7 @@ import socketEventsHelpers from "./helpers/socketEventsHelpers.ts";
 import { sortConversations } from "./helpers/storeHandlers.ts";
 import { emojis } from "./assets/emojis.ts";
 import { searchHandler } from "./helpers/domHandlers.ts";
-import { debounce, formatLastConnectionDate } from "./helpers/utils.ts";
+import { debounce, formatLastConnectionDate, resizeMessageInput } from "./helpers/utils.ts";
 import { filterUnreadConversations } from "./helpers/filters.ts";
 
 declare global {
@@ -19,7 +19,7 @@ declare global {
 if (!globalState.user || !globalState.user._id) window.location.href = "/login";
 
 //DOM elements
-const newMessageInput = document.getElementById("newMessage") as HTMLTextAreaElement;
+export const newMessageInput = document.getElementById("newMessage") as HTMLTextAreaElement;
 export const allContactsSection = document.getElementById("contacts") as HTMLElement;
 const contactsList = document.getElementById("contacts-list") as HTMLDivElement;
 const newMessageBtn = document.getElementById("new-message-btn") as HTMLElement;
@@ -127,12 +127,19 @@ socket.on("notifyConnection", ({ is_online, last_connection, userId }) => {
 
 //DOM event listeners
 
-newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
-newMessageInput.addEventListener("keyup", () => {
+newMessageInput.addEventListener("keydown", (e) => {
+  socketEventsHelpers.sendMessage(e, socket, newMessageInput);
+  resizeMessageInput();
+});
+newMessageInput.addEventListener("input", () => {
   if (newMessageInput.value.length > 0) sendButton.classList.remove("disabled");
   else sendButton.classList.add("disabled");
+  resizeMessageInput();
 });
-sendButton.addEventListener("click", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
+sendButton.addEventListener("click", (e) => {
+  socketEventsHelpers.sendMessage(e, socket, newMessageInput);
+  resizeMessageInput();
+});
 newMessageBtn.addEventListener("click", async () => {
   if (!globalState.user?._id) return;
   const contacts = await getContacts(globalState.user?._id);
