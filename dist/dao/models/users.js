@@ -13,11 +13,11 @@ const userSchema = new mongoose.Schema({
     },
     signup_date: {
         type: String,
-        default: Date(),
+        default: () => new Date(),
     },
     last_connection: {
         type: String,
-        default: Date(),
+        default: () => new Date(),
     },
     is_online: {
         type: Boolean,

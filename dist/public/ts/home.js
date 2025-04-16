@@ -2,6 +2,7 @@ import { getContacts } from "./services/contacts.js";
 import { globalState } from "./store.js";
 import renderHandlers from "./helpers/renderHandlers.js";
 import socketEventsHelpers from "./helpers/socketEventsHelpers.js";
+import { sortConversations } from "./helpers/storeHandlers.js";
 if (!globalState.user || !globalState.user._id)
     window.location.href = "/login";
 //DOM elements
@@ -20,10 +21,14 @@ if (globalState?.user?._id) {
 }
 socket.on("sendConversations", ({ payload }) => {
     globalState.conversations = [...payload];
+    sortConversations();
     renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 socket.on("sendConversation", ({ payload }) => {
-    globalState.conversations.unshift(payload);
+    const conversationExists = globalState.conversations.some((c) => payload._id === c._id);
+    if (!conversationExists)
+        globalState.conversations.push(payload);
+    sortConversations();
     renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 socket.on("sendMessage", (message) => {
@@ -31,6 +36,9 @@ socket.on("sendMessage", (message) => {
         return;
     renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
     messagesSection.scrollTop = messagesSection.scrollHeight;
+    socket.emit("getConversations", { userId: globalState.user._id });
+    sortConversations();
+    renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 //event listeners
 newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));

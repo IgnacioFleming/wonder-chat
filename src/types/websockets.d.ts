@@ -1,4 +1,4 @@
-import { ClientMessage, GetMessagesParams, Message, ObjectId } from "./types.js";
+import { ClientMessage, GetMessagesParams, Message, ObjectId, PopulatedConversationWithId } from "./types.js";
 
 type ClientCallback<T> = (payload: T) => Promise<void>;
 type ServerCallback<T> = (payload: T) => void;
@@ -7,8 +7,8 @@ export interface ServerToClientEvents {
   sendMessage: ServerCallback<Message>;
   sendMessages: ServerCallback<Message[]>;
   register: ServerCallback<string>;
-  sendConversations: ServerCallback<{ payload: PopulatedConversation[] }>;
-  sendConversation: ServerCallback<{ payload: PopulatedConversation }>;
+  sendConversations: ServerCallback<{ payload: PopulatedConversationWithId[] }>;
+  sendConversation: ServerCallback<{ payload: PopulatedConversationWithId }>;
 }
 
 export interface ClientToServerEvents {

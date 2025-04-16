@@ -1,9 +1,9 @@
-import { PopulatedConversation, UserWithId } from "../../types/types.js";
+import { PopulatedConversationWithId, UserWithId } from "../../types/types.js";
 
 type GlobalState = {
   user: Omit<UserWithId, "password"> | null;
   selectedContact: Omit<UserWithId, "password"> | null;
-  conversations: PopulatedConversation[];
+  conversations: PopulatedConversationWithId[];
 };
 
 const persistedUser = localStorage.getItem("user");

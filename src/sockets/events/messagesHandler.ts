@@ -9,7 +9,7 @@ import ConversationDAO from "../../dao/mongoDB/conversations.ts";
 
 export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, socketServer: Server<ServerToClientEvents>) => {
   socket.on("newMessage", async (message: Message) => {
-    const result = await ConversationDAO.startConversation(message);
+    const result = await ConversationDAO.updateConversation(message);
     if (result.status === STATUSES.SUCCESS) socket.emit("sendConversation", { payload: result.payload });
 
     const newMessage = await MessageDAO.create(message);

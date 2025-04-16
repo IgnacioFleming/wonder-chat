@@ -40,7 +40,7 @@ const renderListOfContacts = (socket: Socket, anchorElement: HTMLElement, payloa
     if (isPopulatedConversation(item)) {
       const [other] = item.participants.filter((p) => p._id !== globalState.user?._id);
       contact = other;
-      lastMessageContent = item.lastMessage?.content ?? "";
+      lastMessageContent = item.lastMessage ?? "";
     } else {
       contact = item;
     }

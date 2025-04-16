@@ -1,5 +1,4 @@
 import { messageModel } from "../models/messages.js";
-import ConversationDAO from "./conversations.js";
 export default class MessageDAO {
     static async getAll() {
         try {
@@ -39,7 +38,7 @@ export default class MessageDAO {
             const message = await messageModel.create(body);
             if (!message?.id)
                 return { status: "error" /* STATUSES.ERROR */, error: "Message could not been created" };
-            await ConversationDAO.replaceLastMessage([body.author, body.receiver], body.content);
+            // const result = await ConversationDAO.replaceLastMessage([body.author, body.receiver], body.content);
             return { status: "success" /* STATUSES.SUCCESS */, payload: body };
         }
         catch (error) {

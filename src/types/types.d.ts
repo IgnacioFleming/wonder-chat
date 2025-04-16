@@ -29,19 +29,18 @@ export interface Message {
   author: ObjectId;
   content: string;
   receiver: ObjectId;
-  date?: typeof Date;
+  date?: Date;
   isSent?: boolean;
   isRead?: boolean;
 }
-type LastMessage = Omit<Message, "isSent" | "receiver" | "_id">;
 
-export interface Conversation {
-  participants: ObjectId[];
-  lastMessage: LastMessage;
-}
+export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: ObjectId[]; lastMessage: string };
 
 export interface PopulatedConversation extends Conversation {
   participants: UserWithId[];
+}
+export interface PopulatedConversationWithId extends PopulatedConversation {
+  _id: ObjectId;
 }
 export interface GetMessagesParams {
   userId: string;
