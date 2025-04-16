@@ -52,11 +52,10 @@ export default class UserDAO {
   }
   static async updateLastConnection(id: string, changeStatus: "online" | "offline") {
     try {
-      console.log(id);
-      const query = changeStatus === "online" ? { is_online: true } : { is_online: false, last_connection: new Date() };
-      console.log(query);
+      const last_connection = new Date();
+      const query = changeStatus === "online" ? { is_online: true } : { is_online: false, last_connection };
       await userModel.findByIdAndUpdate(id, { $set: query });
-      return { status: STATUSES.SUCCESS, payload: "User connection updated" };
+      return { status: STATUSES.SUCCESS, payload: { userId: id, is_online: query.is_online, last_connection: query.last_connection } };
     } catch (error) {
       throw error;
     }
