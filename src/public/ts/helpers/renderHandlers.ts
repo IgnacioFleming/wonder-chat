@@ -4,7 +4,7 @@ import { allContactsSection } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
-import { getHourFromDate } from "./utils.ts";
+import { getHourFromDate, setDateLabel } from "./utils.ts";
 import { groupMessagesByDate } from "./groupMessagesByDate.ts";
 
 const addDateHeading = (date: string, target: HTMLElement) => {
@@ -48,27 +48,34 @@ const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_n
     `;
 };
 
-const renderListOfContacts = (socket: Socket, anchorElement: HTMLElement, payload: PopulatedConversation[] | UserWithId[]) => {
+const renderListOfContacts = (socket: Socket, anchorElement: HTMLElement, conversations: PopulatedConversation[] | UserWithId[]) => {
   anchorElement.innerHTML = "";
-  payload.forEach((item) => {
+  conversations.forEach((conversation) => {
     let contact: UserWithId;
     let lastMessageContent = "";
-    if (isPopulatedConversation(item)) {
-      const [other] = item.participants.filter((p) => p._id !== globalState.user?._id);
+    let date = "";
+    if (isPopulatedConversation(conversation)) {
+      const [other] = conversation.participants.filter((p) => p._id !== globalState.user?._id);
       contact = other;
-      lastMessageContent = item.lastMessage ?? "";
+      lastMessageContent = conversation.lastMessage ?? "";
+      date = setDateLabel(conversation.date || new Date());
+      console.log(conversation.date);
+      console.log(date);
     } else {
-      contact = item;
+      contact = conversation;
     }
     const conversationDiv = document.createElement("div");
     conversationDiv.classList.add("list-group-item", "list-item", "contact");
     conversationDiv.innerHTML = `
-        <img class="avatar" src="${contact.photo || "/images/avatar1.png"}" alt="profile avatar" />
-        <div>
-            <h3 class="conversation-name">${contact.full_name}</h3>
-            ${lastMessageContent ? `<p class="last-message">${lastMessageContent}</p>` : ""}
-        </div>
-            `;
+    <img class="avatar" src="${contact.photo || "/images/avatar1.png"}" alt="profile avatar" />
+    <div>
+    <div class="conversation-first-line">
+    <h3 class="conversation-name">${contact.full_name}</h3>
+    ${isPopulatedConversation(conversation) && conversation.date ? ` <div class="conversation-date">${date === "Today" ? getHourFromDate(new Date(conversation.date)) : date}</div>  ` : ""}
+    </div>
+      ${lastMessageContent ? `<p class="last-message">${lastMessageContent}</p>` : ""}
+    </div>
+    `;
     conversationDiv.addEventListener("click", () => socketEventsHelpers.openConversation(socket, contact));
     anchorElement.appendChild(conversationDiv);
   });
