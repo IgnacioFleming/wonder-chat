@@ -21,7 +21,7 @@ const contactsList = document.getElementById("contacts-list") as HTMLDivElement;
 const newMessageBtn = document.getElementById("new-message-btn") as HTMLElement;
 const closeContactsBtn = document.getElementById("close-contacts") as HTMLElement;
 const conversationsContainer = document.querySelector(".conversations") as HTMLDivElement;
-const messagesSection = document.querySelector("section.messages") as HTMLElement;
+export const messagesSection = document.querySelector("section.messages") as HTMLElement;
 
 //socket events
 
