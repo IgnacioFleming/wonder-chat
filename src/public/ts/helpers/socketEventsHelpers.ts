@@ -7,6 +7,7 @@ import { allContactsSection } from "../home.ts";
 const userId = globalState.user?._id;
 const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
   if (allContactsSection.classList.contains("block")) renderHandlers.closeContactsList();
+  if (globalState.selectedContact === null) renderHandlers.setConversationFooterVisible();
   return (globalState.selectedContact = selectedContact);
 };
 

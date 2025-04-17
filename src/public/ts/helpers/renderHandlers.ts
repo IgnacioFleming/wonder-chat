@@ -4,6 +4,7 @@ import { allContactsSection } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
+import { getHourFromDate } from "./utils.ts";
 
 const renderMessages = (messages: Message[], senderId: string) => {
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
@@ -12,8 +13,11 @@ const renderMessages = (messages: Message[], senderId: string) => {
 };
 
 const renderSingleMessage = (message: Message, senderId: string, target: HTMLElement) => {
+  console.log(message);
   const paragraph = document.createElement("p");
-  paragraph.innerText = message.content;
+
+  paragraph.innerHTML = `${message.content}<span class="message-time">${message.date ? getHourFromDate(new Date(message.date)) : ""}</span>`;
+
   paragraph.className = "message";
   if (message.author.toString() === senderId) paragraph.classList.add("sent");
   target.appendChild(paragraph);
@@ -66,10 +70,16 @@ const closeContactsList = () => {
   }, 270);
 };
 
+const setConversationFooterVisible = () => {
+  const footer = document.querySelector(".conversation-footer") as HTMLElement;
+  footer.classList.replace("hidden", "visible");
+};
+
 export default {
   renderMessages,
   renderSingleMessage,
   renderConversationHeader,
   renderListOfContacts,
   closeContactsList,
+  setConversationFooterVisible,
 };
