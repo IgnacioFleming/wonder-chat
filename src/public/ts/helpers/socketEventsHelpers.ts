@@ -7,8 +7,7 @@ import { allContactsSection } from "../home.ts";
 const userId = globalState.user?._id;
 const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
   if (allContactsSection.classList.contains("block")) renderHandlers.closeContactsList();
-  globalState.selectedContact = selectedContact;
-  return localStorage.setItem("selectedContact", JSON.stringify(selectedContact));
+  return (globalState.selectedContact = selectedContact);
 };
 
 const openConversation = (socket: Socket, contact: Omit<UserWithId, "password">) => {
