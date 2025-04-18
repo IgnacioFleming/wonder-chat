@@ -251,6 +251,10 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   color: var(--white);
   align-self: flex-end;
 }
+.conversation .messages .message.sent .msg-check {
+  align-self: flex-end;
+  font-size: 15px;
+}
 
 .conversation .messages .message.sent::selection {
   background-color: var(--white);
@@ -261,6 +265,10 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   font-weight: 400;
   font-size: 10px;
   align-self: flex-end;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
 }
 
 .conversation .message-input {

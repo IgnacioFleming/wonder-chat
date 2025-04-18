@@ -1,6 +1,7 @@
 import { Errback, ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import { STATUS_TYPES } from "../utils/status.ts";
+import { MSG_STATUS } from "./consts.ts";
 
 export type ObjectId = Types.ObjectId;
 
@@ -30,8 +31,11 @@ export interface Message {
   content: string;
   receiver: ObjectId;
   date?: Date;
-  isSent?: boolean;
-  isRead?: boolean;
+  status?: (typeof MSG_STATUS)[keyof typeof MSG_STATUS];
+}
+
+export interface MessageWithId extends Message {
+  _id: ObjectId;
 }
 
 export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: ObjectId[]; lastMessage: string };

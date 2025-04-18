@@ -7,17 +7,20 @@ import { toObjectId } from "../../utils/utils.ts";
 import { STATUSES } from "../../types/enums.js";
 import ConversationDAO from "../../dao/mongoDB/conversations.ts";
 
-export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, socketServer: Server<ServerToClientEvents>) => {
-  socket.on("newMessage", async (message: Message) => {
+export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, socketServer: Server<ClientToServerEvents, ServerToClientEvents>) => {
+  socket.on("newMessage", async (message) => {
     const result = await ConversationDAO.updateConversation(message);
     if (result.status === STATUSES.SUCCESS) socket.emit("sendConversation", { payload: result.payload });
-
+    message.status = "sent";
     const newMessage = await MessageDAO.create(message);
     if (newMessage.status === STATUSES.SUCCESS) {
-      socket.emit("sendMessage", message);
+      socket.emit("sendMessage", newMessage.payload);
       const receiverSocketId = userSocketMap.get(message.receiver.toString());
       if (receiverSocketId) {
-        socketServer.to(receiverSocketId).emit("sendMessage", message);
+        socketServer.to(receiverSocketId).emit("sendMessage", newMessage.payload);
+        const authorSocketId = userSocketMap.get(message.author.toString());
+        console.log(authorSocketId);
+        if (authorSocketId) socketServer.to(authorSocketId).emit("updateMessageStatus", { messageId: String(message._id), status: "received" });
       }
     }
   });
@@ -30,7 +33,15 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
     socket.emit("sendMessages", result.payload);
   });
 
-  socket.on("markRead", async ({ _id }: { _id: ObjectId }) => {
-    await MessageDAO.markRead(_id);
+  socket.on("markAllMessagesAsReceived", async ({ userId }) => {
+    const updatedMessages = await MessageDAO.markAllAsReceived(userId);
+    if (updatedMessages.status !== STATUSES.SUCCESS) return;
+    updatedMessages.payload.forEach((msg) => {
+      const authorId = msg.author.toString();
+      const receiverSocket = userSocketMap.get(authorId);
+      if (receiverSocket) {
+        socketServer.to(receiverSocket).emit("updateMessageStatus", { messageId: msg._id.toString(), status: "received" });
+      }
+    });
   });
 };

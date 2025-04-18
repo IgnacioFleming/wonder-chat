@@ -1,13 +1,13 @@
-import { Message } from "../../../types/types.js";
+import { MessageWithId } from "../../../types/types.js";
 import { setDateLabel } from "./utils.ts";
 
 type MessageGroup = {
   date: string;
-  messages: Message[];
+  messages: MessageWithId[];
 };
 
-export const groupMessagesByDate = (messages: Message[]): MessageGroup[] => {
-  const groups: { [key: string]: Message[] } = {};
+export const groupMessagesByDate = (messages: MessageWithId[]): MessageGroup[] => {
+  const groups: { [key: string]: MessageWithId[] } = {};
   messages.forEach((message) => {
     if (!message.date) return groups["Today"].push(message);
     const label = setDateLabel(message.date);

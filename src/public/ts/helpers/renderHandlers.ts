@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { Message, PopulatedConversation, UserWithId } from "../../../types/types.js";
+import { MessageWithId, PopulatedConversation, UserWithId } from "../../../types/types.js";
 import { allContactsSection } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
@@ -14,7 +14,7 @@ const addDateHeading = (date: string, target: HTMLElement) => {
   target.appendChild(dateHeading);
 };
 
-const renderMessages = (messages: Message[], senderId: string) => {
+const renderMessages = (messages: MessageWithId[], senderId: string) => {
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
   messagesSection.innerHTML = "";
   if (messages.length === 0) return;
@@ -25,10 +25,15 @@ const renderMessages = (messages: Message[], senderId: string) => {
   });
 };
 
-const renderSingleMessage = (message: Message, senderId: string, target: HTMLElement) => {
+const renderSingleMessage = (message: MessageWithId, senderId: string, target: HTMLElement) => {
   const paragraph = document.createElement("p");
-
-  paragraph.innerHTML = `${message.content}<span class="message-time">${message.date ? getHourFromDate(new Date(message.date)) : getHourFromDate(new Date())}</span>`;
+  paragraph.setAttribute("data-msgId", String(message._id));
+  paragraph.innerHTML = `
+  ${message.content}
+  <span class="message-time">${message.date ? getHourFromDate(new Date(message.date)) : getHourFromDate(new Date())}
+  ${message.author.toString() === senderId ? `<i class="bi bi-${message.status === "sent" ? "check2" : "check2-all"} msg-check ${message.status === "read" && "msg-read"}"></i>` : ""}
+  </span>
+  `;
 
   paragraph.className = "message";
   if (message.author.toString() === senderId) paragraph.classList.add("sent");
@@ -59,8 +64,6 @@ const renderListOfContacts = (socket: Socket, anchorElement: HTMLElement, conver
       contact = other;
       lastMessageContent = conversation.lastMessage ?? "";
       date = setDateLabel(conversation.date || new Date());
-      console.log(conversation.date);
-      console.log(date);
     } else {
       contact = conversation;
     }
