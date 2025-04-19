@@ -72,9 +72,7 @@ socket.on("sendMessage", (message) => {
 });
 
 socket.on("updateMessageStatus", ({ messageId, status }) => {
-  console.log("from updateMessageStatus", messageId);
   const messageIcon = messagesSection.querySelector(`[data-msgid="${messageId}"]`)?.querySelector("i") as HTMLElement;
-  console.log(messageIcon);
   messageIcon.classList.replace("bi-check2", "bi-check2-all");
   if (status === "read") messageIcon.classList.add("msg-read");
 });

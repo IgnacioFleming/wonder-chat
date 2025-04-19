@@ -1,4 +1,4 @@
-import type { GetMessagesParams, Message, ObjectId } from "../../types/types.d.ts";
+import type { GetMessagesParams } from "../../types/types.d.ts";
 import type { ClientToServerEvents, ServerToClientEvents } from "../../types/websockets.d.ts";
 import { Server, Socket } from "socket.io";
 import MessageDAO from "../../dao/mongoDB/messages.ts";
@@ -8,6 +8,7 @@ import { STATUSES } from "../../types/enums.js";
 import ConversationDAO from "../../dao/mongoDB/conversations.ts";
 
 export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, socketServer: Server<ClientToServerEvents, ServerToClientEvents>) => {
+  //revisar por que no estoy recibiendo el update
   socket.on("newMessage", async (message) => {
     const result = await ConversationDAO.updateConversation(message);
     if (result.status === STATUSES.SUCCESS) socket.emit("sendConversation", { payload: result.payload });
@@ -19,7 +20,6 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
       if (receiverSocketId) {
         socketServer.to(receiverSocketId).emit("sendMessage", newMessage.payload);
         const authorSocketId = userSocketMap.get(message.author.toString());
-        console.log(authorSocketId);
         if (authorSocketId) socketServer.to(authorSocketId).emit("updateMessageStatus", { messageId: String(message._id), status: "received" });
       }
     }
@@ -34,11 +34,13 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
   });
 
   socket.on("markAllMessagesAsReceived", async ({ userId }) => {
+    console.log("llamo al socket para actualizar mensajes");
     const updatedMessages = await MessageDAO.markAllAsReceived(userId);
     if (updatedMessages.status !== STATUSES.SUCCESS) return;
     updatedMessages.payload.forEach((msg) => {
       const authorId = msg.author.toString();
       const receiverSocket = userSocketMap.get(authorId);
+      console.log("receiver socket is ", receiverSocket);
       if (receiverSocket) {
         socketServer.to(receiverSocket).emit("updateMessageStatus", { messageId: msg._id.toString(), status: "received" });
       }
