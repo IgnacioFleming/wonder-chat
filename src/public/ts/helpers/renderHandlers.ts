@@ -15,6 +15,7 @@ const addDateHeading = (date: string, target: HTMLElement) => {
 };
 
 const renderMessages = (messages: MessageWithId[], senderId: string) => {
+  2 + 23;
   const messagesSection = document.querySelector("section.messages") as HTMLElement;
   messagesSection.innerHTML = "";
   if (messages.length === 0) return;
@@ -38,6 +39,7 @@ const renderSingleMessage = (message: MessageWithId, senderId: string, target: H
   paragraph.className = "message";
   if (message.author.toString() === senderId) paragraph.classList.add("sent");
   target.appendChild(paragraph);
+  target.scrollTop = target.scrollHeight;
 };
 
 const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_name" | "photo">) => {
