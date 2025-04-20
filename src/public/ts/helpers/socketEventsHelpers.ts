@@ -19,6 +19,7 @@ const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
 const openConversation = (socket: Socket<ServerToClientEvents, ClientToServerEvents>, contact: Omit<UserWithId, "password">) => {
   if (!userId || contact._id === globalState.selectedContact.contact?._id) return;
   setSelectedContact(contact);
+  messagesSection.innerHTML = "";
   renderHandlers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
   socket.emit("getMessages", { userId, contactId: contact._id });
   socket.on("sendMessages", (result) => {

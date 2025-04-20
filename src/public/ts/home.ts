@@ -63,14 +63,13 @@ socket.on("sendConversation", ({ payload }) => {
 });
 
 socket.on("sendMessage", (message) => {
+  console.log(message);
   if (!globalState.user?._id) return;
   if (globalState.selectedContact.contact?._id === message.author || globalState.selectedContact.contact?._id === message.receiver) {
     renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
   }
   if (message.author !== globalState.user?._id && message.author === globalState.selectedContact.contact?._id) {
-    setTimeout(() => {
-      if (globalState.user) socket.emit("updateMessagesToRead", { contactId: message.author, userId: globalState.user?._id });
-    }, 1000);
+    if (globalState.user) socket.emit("updateMessagesToRead", { contactId: message.author, userId: globalState.user?._id });
   }
 
   socket.emit("getConversations", { userId: globalState.user._id });
