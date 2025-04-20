@@ -40,7 +40,7 @@ closeContactsBtn.addEventListener("click", renderHandlers.closeContactsList);
 
 const socket = window.io();
 
-//emits
+// initial emits
 
 if (globalState?.user?._id) {
   socket.emit("register", globalState.user._id.toString());
@@ -67,13 +67,19 @@ socket.on("sendMessage", (message) => {
   if (globalState.selectedContact.contact?._id === message.author || globalState.selectedContact.contact?._id === message.receiver) {
     renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
   }
+  if (message.author !== globalState.user?._id && message.author === globalState.selectedContact.contact?._id) {
+    setTimeout(() => {
+      if (globalState.user) socket.emit("updateMessagesToRead", { contactId: message.author, userId: globalState.user?._id });
+    }, 1000);
+  }
+
   socket.emit("getConversations", { userId: globalState.user._id });
   sortConversations();
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 
-socket.on("updateMessageStatus", (result) => {
-  const messageIcon = messagesSection.querySelector(`[data-msgid="${result.messageId}"]`)?.querySelector("i") as HTMLElement;
-  messageIcon.classList.replace("bi-check2", "bi-check2-all");
-  if (result.status === "read") messageIcon.classList.add("msg-read");
+socket.on("updateMessageStatus", ({ message, status }) => {
+  const messageIcon = messagesSection.querySelector(`[data-msgid="${message._id}"]`)?.querySelector("i") as HTMLElement;
+  if (status === "received") messageIcon.classList.replace("bi-check2", "bi-check2-all");
+  if (status === "read") messageIcon.classList.add("msg-read");
 });

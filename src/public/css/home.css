@@ -256,7 +256,7 @@ input[type="radio"].btn-check:checked + .custom-toggle {
   font-size: 15px;
 }
 .conversation .messages .message.sent .msg-check.msg-read {
-  color: red;
+  color: var(--cyan);
 }
 
 .conversation .messages .message.sent::selection {
