@@ -1,5 +1,5 @@
 import { MSG_STATUS } from "./consts.ts";
-import { ClientMessage, GetMessagesParams, Message, MessageWithId, ObjectId, PopulatedConversationWithId } from "./types.js";
+import { ClientMessage, GetMessagesParams, Message, MessageWithId, GeneralId, PopulatedConversationWithId } from "./types.js";
 
 type ClientCallback<T> = (payload: T) => Promise<void>;
 type ServerCallback<T> = (payload: T) => void;
@@ -16,9 +16,10 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   newMessage: ClientCallback<MessageWithId>;
   register: ClientCallback<string>;
-  getMessages: ClientCallback<GetMessagesParams>;
   sendMessage: ClientCallback<MessageWithId>;
-  getConversations: ClientCallback<{ userId: ObjectId }>;
+  getMessages: ClientCallback<GetMessagesParams>;
+  getConversations: ClientCallback<{ userId: GeneralId }>;
   sendMessages: ClientCallback<MessageWithId[]>;
-  markAllMessagesAsReceived: ClientCallback<{ userId: ObjectId }>;
+  markAllMessagesAsReceived: ClientCallback<{ userId: GeneralId }>;
+  updateMessagesToRead: ClientCallback<{ userId: GeneralId; contactId: GeneralId }>;
 }

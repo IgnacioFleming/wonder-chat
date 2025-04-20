@@ -1,16 +1,16 @@
 import { UpdateWriteOpResult } from "mongoose";
 import { conversationSchema } from "../../schemas/conversations.ts";
 import { PersistResult } from "../../types/DAO.js";
-import { Conversation, Message, ObjectId, PopulatedConversation, PopulatedConversationWithId } from "../../types/types.js";
+import { Conversation, Message, GeneralId, PopulatedConversation, PopulatedConversationWithId } from "../../types/types.js";
 import { conversationModel } from "../models/conversations.ts";
 import { STATUSES } from "../../types/enums.js";
 
 export default class ConversationDAO {
-  static async getAllByUserId(id: ObjectId): Promise<PersistResult<PopulatedConversation>> {
+  static async getAllByUserId(id: GeneralId): Promise<PersistResult<PopulatedConversation>> {
     const conversations = await conversationModel.find({ participants: id }).populate("participants").lean<PopulatedConversation>();
     return { status: STATUSES.SUCCESS, payload: conversations };
   }
-  static async getByParticipants(participants: ObjectId[]): Promise<PersistResult<Conversation>> {
+  static async getByParticipants(participants: GeneralId[]): Promise<PersistResult<Conversation>> {
     const conversation = await conversationModel.findOne({ participants: { $all: participants } }).lean<Conversation>();
     if (!conversation) return { status: STATUSES.ERROR, error: "Conversation not found" };
     return { status: STATUSES.SUCCESS, payload: conversation };
@@ -21,7 +21,7 @@ export default class ConversationDAO {
     await conversationModel.create(data);
     return { status: STATUSES.SUCCESS, payload: conversation };
   }
-  static async replaceLastMessage(participants: ObjectId[], lastMessageContent: string): Promise<PersistResult<UpdateWriteOpResult>> {
+  static async replaceLastMessage(participants: GeneralId[], lastMessageContent: string): Promise<PersistResult<UpdateWriteOpResult>> {
     const newLastConversation = await conversationModel.updateOne({ participants: { $all: participants } }, { $set: { lastMessage: lastMessageContent, date: new Date() } });
     return { status: STATUSES.SUCCESS, payload: newLastConversation };
   }
@@ -42,7 +42,7 @@ export default class ConversationDAO {
     return { status: STATUSES.SUCCESS, payload: await populatedConversation.populate("participants") };
   }
 
-  static async exists(participants: ObjectId[]): Promise<boolean> {
+  static async exists(participants: GeneralId[]): Promise<boolean> {
     const conversation = await conversationModel.findOne({ participants: { $all: participants } }).lean<Conversation>();
     return !!conversation;
   }

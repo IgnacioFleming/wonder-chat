@@ -6,6 +6,7 @@ import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
 import { getHourFromDate, setDateLabel } from "./utils.ts";
 import { groupMessagesByDate } from "./groupMessagesByDate.ts";
+import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
 
 const addDateHeading = (date: string, target: HTMLElement) => {
   const dateHeading = document.createElement("h6");
@@ -55,7 +56,7 @@ const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_n
     `;
 };
 
-const renderListOfContacts = (socket: Socket, anchorElement: HTMLElement, conversations: PopulatedConversation[] | UserWithId[]) => {
+const renderListOfContacts = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, anchorElement: HTMLElement, conversations: PopulatedConversation[] | UserWithId[]) => {
   anchorElement.innerHTML = "";
   conversations.forEach((conversation) => {
     let contact: UserWithId;

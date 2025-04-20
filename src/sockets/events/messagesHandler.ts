@@ -3,7 +3,6 @@ import type { ClientToServerEvents, ServerToClientEvents } from "../../types/web
 import { Server, Socket } from "socket.io";
 import MessageDAO from "../../dao/mongoDB/messages.ts";
 import { userSocketMap } from "../SocketManager.ts";
-import { toObjectId } from "../../utils/utils.ts";
 import { STATUSES } from "../../types/enums.js";
 import ConversationDAO from "../../dao/mongoDB/conversations.ts";
 
@@ -26,9 +25,7 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
   });
 
   socket.on("getMessages", async ({ userId, contactId }: GetMessagesParams) => {
-    const userObjectId = toObjectId(userId);
-    const contactObjectId = toObjectId(contactId);
-    const result = await MessageDAO.getUserMessagesById(userObjectId, contactObjectId);
+    const result = await MessageDAO.getUserMessagesById(userId, contactId);
     if (result.status === STATUSES.ERROR) return;
     socket.emit("sendMessages", result.payload);
   });
@@ -41,6 +38,17 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
       const receiverSocket = userSocketMap.get(authorId);
       if (receiverSocket) {
         socketServer.to(receiverSocket).emit("updateMessageStatus", { messageId: msg._id.toString(), status: "received" });
+      }
+    });
+  });
+  socket.on("updateMessagesToRead", async ({ userId, contactId }) => {
+    const updatedMessages = await MessageDAO.markAllAsRead(userId, contactId);
+    if (updatedMessages.status !== STATUSES.SUCCESS) return;
+    updatedMessages.payload.forEach((msg) => {
+      const authorId = msg.author.toString();
+      const receiverSocket = userSocketMap.get(authorId);
+      if (receiverSocket) {
+        socketServer.to(receiverSocket).emit("updateMessageStatus", { messageId: msg._id.toString(), status: "read" });
       }
     });
   });

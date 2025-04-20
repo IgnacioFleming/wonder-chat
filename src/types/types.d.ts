@@ -3,13 +3,15 @@ import { Types } from "mongoose";
 import { STATUS_TYPES } from "../utils/status.ts";
 import { MSG_STATUS } from "./consts.ts";
 
-export type ObjectId = Types.ObjectId;
+export type GeneralId = Types.ObjectId;
 
 export type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
 export type Response = (res: Response, payload?: Object | string, error?: string | { name: string; message: string }) => void;
 
 export type ErrorMiddleware = (err: Errback, req: Request, res: Response, next?: NextFunction) => void;
+
+export type UserId = GeneralId;
 
 export interface User {
   full_name: string;
@@ -21,32 +23,32 @@ export interface User {
 }
 
 export interface UserWithId extends User {
-  _id: ObjectId;
+  _id: GeneralId;
 }
 
 export type AuthUser = Pick<User, "full_name" | "password">;
 
 export interface Message {
-  author: ObjectId;
+  author: GeneralId;
   content: string;
-  receiver: ObjectId;
+  receiver: GeneralId;
   date?: Date;
   status?: (typeof MSG_STATUS)[keyof typeof MSG_STATUS];
 }
 
 export interface MessageWithId extends Message {
-  _id: ObjectId;
+  _id: GeneralId;
 }
 
-export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: ObjectId[]; lastMessage: string };
+export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: GeneralId[]; lastMessage: string };
 
 export interface PopulatedConversation extends Conversation {
   participants: UserWithId[];
 }
 export interface PopulatedConversationWithId extends PopulatedConversation {
-  _id: ObjectId;
+  _id: GeneralId;
 }
 export interface GetMessagesParams {
-  userId: string;
-  contactId: string;
+  userId: GeneralId;
+  contactId: GeneralId;
 }
