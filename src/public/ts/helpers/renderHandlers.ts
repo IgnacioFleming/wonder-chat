@@ -8,11 +8,11 @@ import { getHourFromDate, setDateLabel } from "./utils.ts";
 import { groupMessagesByDate } from "./groupMessagesByDate.ts";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
 
-const addDateHeading = (date: string, target: HTMLElement) => {
-  const dateHeading = document.createElement("h6");
-  dateHeading.className = "date-heading";
-  dateHeading.innerText = date.toUpperCase();
-  target.appendChild(dateHeading);
+const addHeading = (text: string, target: HTMLElement) => {
+  const heading = document.createElement("h6");
+  heading.className = "message-heading";
+  heading.innerText = text.toUpperCase();
+  target.appendChild(heading);
 };
 
 const renderMessages = (messages: MessageWithId[], senderId: string) => {
@@ -22,8 +22,11 @@ const renderMessages = (messages: MessageWithId[], senderId: string) => {
   if (messages.length === 0) return;
   const groupedMessages = groupMessagesByDate(messages);
   groupedMessages.forEach((group) => {
-    addDateHeading(group.date, messagesSection);
-    group.messages.forEach((message) => renderSingleMessage(message, senderId, messagesSection));
+    addHeading(group.date, messagesSection);
+    group.messages.forEach((message) => {
+      if (message._id === firstUnreadMessage?._id && message.author.toString() !== senderId) addHeading("New Messages", messagesSection);
+      renderSingleMessage(message, senderId, messagesSection);
+    });
   });
   if (firstUnreadMessage) {
     const targetMessage = messagesSection.querySelector(`[data-msgid="${firstUnreadMessage._id}"]`);
@@ -46,7 +49,6 @@ const renderSingleMessage = (message: MessageWithId, senderId: string, target: H
   paragraph.className = "message";
   if (message.author.toString() === senderId) paragraph.classList.add("sent");
   target.appendChild(paragraph);
-  // target.scrollTop = target.scrollHeight;
 };
 
 const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_name" | "photo">) => {
@@ -113,5 +115,5 @@ export default {
   renderListOfContacts,
   closeContactsList,
   setConversationFooterVisible,
-  addDateHeading,
+  addHeading,
 };
