@@ -70,9 +70,14 @@ socket.on("sendMessage", (message) => {
   if (message.author !== globalState.user?._id && message.author === globalState.selectedContact.contact?._id) {
     if (globalState.user) socket.emit("updateMessagesToRead", { contactId: message.author, userId: globalState.user?._id });
   }
-  messagesSection.style.scrollBehavior = "smooth";
-  messagesSection.scrollTop = messagesSection.scrollHeight;
-  messagesSection.style.scrollBehavior = "auto";
+
+  messagesSection.scrollTo({
+    top: messagesSection.scrollHeight,
+    behavior: "smooth",
+  });
+  // messagesSection.style.scrollBehavior = "smooth";
+  // messagesSection.scrollTop = messagesSection.scrollHeight;
+  // messagesSection.style.scrollBehavior = "auto";
 
   socket.emit("getConversations", { userId: globalState.user._id });
   sortConversations();

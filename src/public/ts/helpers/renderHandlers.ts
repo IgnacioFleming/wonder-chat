@@ -37,10 +37,11 @@ const renderMessages = (messages: MessageWithId[], senderId: string) => {
 };
 
 const renderSingleMessage = (message: MessageWithId, senderId: string, target: HTMLElement) => {
-  const paragraph = document.createElement("p");
+  const paragraph = document.createElement("div");
   paragraph.setAttribute("data-msgId", String(message._id));
   paragraph.innerHTML = `
-  ${message.content}
+
+  <p>${message.content}</p>
   <span class="message-time">${message.date ? getHourFromDate(new Date(message.date)) : getHourFromDate(new Date())}
   ${message.author.toString() === senderId ? `<i class="bi bi-${message.status === "sent" ? "check2" : "check2-all"} msg-check ${message.status === "read" && "msg-read"}"></i>` : ""}
   </span>
