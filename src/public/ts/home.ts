@@ -25,6 +25,7 @@ export const messagesSection = document.querySelector("section.messages") as HTM
 
 //DOM event listeners
 
+//arreglar problema donde no se actualiza el status del mensaje y la conversacion al estar abierta
 newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
 newMessageBtn.addEventListener("click", async () => {
   if (!globalState.user?._id) return;
@@ -51,6 +52,7 @@ if (globalState?.user?._id) {
 //listeners
 
 socket.on("sendConversations", ({ payload }) => {
+  console.log("el payload de sendConversations", payload);
   globalState.conversations = [...payload];
   sortConversations();
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
@@ -75,17 +77,23 @@ socket.on("sendMessage", (message) => {
     top: messagesSection.scrollHeight,
     behavior: "smooth",
   });
-  // messagesSection.style.scrollBehavior = "smooth";
-  // messagesSection.scrollTop = messagesSection.scrollHeight;
-  // messagesSection.style.scrollBehavior = "auto";
 
   socket.emit("getConversations", { userId: globalState.user._id });
   sortConversations();
+  console.log("conversaciones del estado global");
+  console.log(globalState.conversations);
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 
 socket.on("updateMessageStatus", ({ message, status }) => {
   const messageIcon = messagesSection.querySelector(`[data-msgid="${message._id}"]`)?.querySelector("i") as HTMLElement;
-  if (status === "received") messageIcon.classList.replace("bi-check2", "bi-check2-all");
-  if (status === "read") messageIcon.classList.add("msg-read");
+  const conversationIcon = document.querySelector(`i[data-conversationid="${message._id}"]`) as HTMLElement;
+  if (status === "received") {
+    messageIcon.classList.replace("bi-check2", "bi-check2-all");
+    conversationIcon.classList.replace("bi-check2", "bi-check2-all");
+  }
+  if (status === "read") {
+    messageIcon.classList.add("msg-read");
+    conversationIcon.classList.add("msg-read");
+  }
 });

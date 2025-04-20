@@ -1,7 +1,7 @@
 import { UpdateWriteOpResult } from "mongoose";
 import { conversationSchema } from "../../schemas/conversations.ts";
 import { PersistResult } from "../../types/DAO.js";
-import { Conversation, Message, GeneralId, PopulatedConversation, PopulatedConversationWithId } from "../../types/types.js";
+import { Conversation, GeneralId, PopulatedConversation, PopulatedConversationWithId, MessageStatus, MessageWithId } from "../../types/types.js";
 import { conversationModel } from "../models/conversations.ts";
 import { STATUSES } from "../../types/enums.js";
 
@@ -21,20 +21,22 @@ export default class ConversationDAO {
     await conversationModel.create(data);
     return { status: STATUSES.SUCCESS, payload: conversation };
   }
-  static async replaceLastMessage(participants: GeneralId[], lastMessageContent: string): Promise<PersistResult<UpdateWriteOpResult>> {
-    const newLastConversation = await conversationModel.updateOne({ participants: { $all: participants } }, { $set: { lastMessage: lastMessageContent, date: new Date() } });
+  static async replaceLastMessage(props: { participants: GeneralId[]; author: GeneralId; lastMessageContent: string; lastMessageId: GeneralId; status: MessageStatus }): Promise<PersistResult<UpdateWriteOpResult>> {
+    const newLastConversation = await conversationModel.updateOne({ participants: { $all: props.participants } }, { $set: { lastMessage: props.lastMessageContent, date: new Date(), lastMessageId: props.lastMessageId, status: props.status, author: props.author } });
     return { status: STATUSES.SUCCESS, payload: newLastConversation };
   }
-  static async updateConversation(body: Message): Promise<PersistResult<PopulatedConversationWithId>> {
+  static async updateConversation(body: MessageWithId): Promise<PersistResult<PopulatedConversationWithId>> {
+    console.log("el body del updateConversation", body);
     const { status, payload } = await this.getByParticipants([body.author, body.receiver]);
     if (status === STATUSES.SUCCESS) {
-      this.replaceLastMessage([body.author, body.receiver], body.content);
+      this.replaceLastMessage({ participants: [body.author, body.receiver], author: body.author, lastMessageContent: body.content, lastMessageId: body._id, status: body.status || "sent" });
       return await new conversationModel(payload).populate("participants");
     }
     const newConversation: Conversation = {
       participants: [body.author, body.receiver],
       author: body.author,
       lastMessage: body.content,
+      lastMessageId: body._id,
     };
     const result = await this.create(newConversation);
     if (result.status !== STATUSES.SUCCESS) return { status: result.status, error: result.error || "There was an error during the process" };

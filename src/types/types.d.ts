@@ -28,19 +28,21 @@ export interface UserWithId extends User {
 
 export type AuthUser = Pick<User, "full_name" | "password">;
 
+export type MessageStatus = (typeof MSG_STATUS)[keyof typeof MSG_STATUS];
+
 export interface Message {
   author: GeneralId;
   content: string;
   receiver: GeneralId;
   date?: Date;
-  status?: (typeof MSG_STATUS)[keyof typeof MSG_STATUS];
+  status?: MessageStatus;
 }
 
 export interface MessageWithId extends Message {
   _id: GeneralId;
 }
 
-export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: GeneralId[]; lastMessage: string };
+export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: GeneralId[]; lastMessage: string; lastMessageId: GeneralId };
 
 export interface PopulatedConversation extends Conversation {
   participants: UserWithId[];
