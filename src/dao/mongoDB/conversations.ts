@@ -26,11 +26,10 @@ export default class ConversationDAO {
     return { status: STATUSES.SUCCESS, payload: newLastConversation };
   }
   static async updateConversation(body: MessageWithId): Promise<PersistResult<PopulatedConversationWithId>> {
-    console.log("el body del updateConversation", body);
     const { status, payload } = await this.getByParticipants([body.author, body.receiver]);
     if (status === STATUSES.SUCCESS) {
       this.replaceLastMessage({ participants: [body.author, body.receiver], author: body.author, lastMessageContent: body.content, lastMessageId: body._id, status: body.status || "sent" });
-      return await new conversationModel(payload).populate("participants");
+      return { status: STATUSES.SUCCESS, payload: await new conversationModel(payload).populate("participants") };
     }
     const newConversation: Conversation = {
       participants: [body.author, body.receiver],

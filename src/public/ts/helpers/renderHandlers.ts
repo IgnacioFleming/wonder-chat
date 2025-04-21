@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
-import { MessageWithId, PopulatedConversation, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
-import { allContactsSection } from "../home.ts";
+import { GeneralId, MessageWithId, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
+import { allContactsSection, conversationsContainer } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
@@ -80,6 +80,7 @@ const renderListOfContacts = (socket: Socket<ClientToServerEvents, ServerToClien
       contact = item;
     }
     const conversationDiv = document.createElement("div");
+    conversationDiv.setAttribute("data-conversationid", item._id.toString());
     conversationDiv.classList.add("list-group-item", "list-item", "contact");
     conversationDiv.innerHTML = `
     <img class="avatar" src="${contact.photo || "/images/avatar1.png"}" alt="profile avatar" />
@@ -105,6 +106,13 @@ const renderListOfContacts = (socket: Socket<ClientToServerEvents, ServerToClien
   });
 };
 
+const sortSingleConversation = (conversationId: GeneralId) => {
+  const conversation = document.querySelector(`.conversations .contact[data-conversationid="${conversationId}"]`) as HTMLDivElement;
+  console.log(conversation);
+  conversation.remove();
+  conversationsContainer.prepend(conversation);
+};
+
 const closeContactsList = () => {
   allContactsSection.classList.add("close");
   setTimeout(() => {
@@ -126,4 +134,5 @@ export default {
   closeContactsList,
   setConversationFooterVisible,
   addHeading,
+  sortSingleConversation,
 };
