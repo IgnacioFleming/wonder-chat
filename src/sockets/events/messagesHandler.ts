@@ -10,14 +10,9 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
   socket.on("newMessage", async (message) => {
     message.status = "sent";
     const newMessage = await MessageDAO.create(message);
-    console.log("new message es", newMessage);
     if (newMessage.status === STATUSES.SUCCESS) {
-      const result = await ConversationDAO.updateConversation({ ...message, _id: newMessage.payload?._id });
-      console.log("result del update conversation es", result);
-      if (result.status === STATUSES.SUCCESS) {
-        console.log("envio la conversacion");
-        socket.emit("sendConversation", { payload: result.payload });
-      }
+      const { status, payload } = await ConversationDAO.updateConversation({ ...message, _id: newMessage.payload?._id });
+      if (status === STATUSES.SUCCESS) socket.emit("sendConversation", { payload });
       socket.emit("sendMessage", newMessage.payload);
       const receiverSocketId = userSocketMap.get(message.receiver.toString());
       if (receiverSocketId) {

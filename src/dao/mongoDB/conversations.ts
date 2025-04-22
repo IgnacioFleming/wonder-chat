@@ -1,7 +1,7 @@
 import { UpdateWriteOpResult } from "mongoose";
 import { conversationSchema } from "../../schemas/conversations.ts";
 import { PersistResult } from "../../types/DAO.js";
-import { Conversation, GeneralId, PopulatedConversation, PopulatedConversationWithId, MessageStatus, MessageWithId } from "../../types/types.js";
+import { Conversation, GeneralId, PopulatedConversation, PopulatedConversationWithId, MessageStatus, MessageWithId, ConversationWithId } from "../../types/types.js";
 import { conversationModel } from "../models/conversations.ts";
 import { STATUSES } from "../../types/enums.js";
 
@@ -15,11 +15,11 @@ export default class ConversationDAO {
     if (!conversation) return { status: STATUSES.ERROR, error: "Conversation not found" };
     return { status: STATUSES.SUCCESS, payload: conversation };
   }
-  static async create(conversation: Conversation): Promise<PersistResult<Conversation>> {
+  static async create(conversation: Conversation): Promise<PersistResult<ConversationWithId>> {
     const { success, data, error } = conversationSchema.safeParse(conversation);
     if (!success) return { status: STATUSES.ERROR, error };
-    await conversationModel.create(data);
-    return { status: STATUSES.SUCCESS, payload: conversation };
+    const result = await conversationModel.create(data);
+    return { status: STATUSES.SUCCESS, payload: { ...conversation, _id: result.id } };
   }
   static async replaceLastMessage(props: { participants: GeneralId[]; author: GeneralId; lastMessageContent: string; lastMessageId: GeneralId; status: MessageStatus }): Promise<PersistResult<UpdateWriteOpResult>> {
     const newLastConversation = await conversationModel.updateOne({ participants: { $all: props.participants } }, { $set: { lastMessage: props.lastMessageContent, date: new Date(), lastMessageId: props.lastMessageId, status: props.status, author: props.author } });
