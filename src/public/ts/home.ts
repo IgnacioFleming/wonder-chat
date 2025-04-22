@@ -5,6 +5,7 @@ import { ClientToServerEvents, ServerToClientEvents } from "../../types/websocke
 import renderHandlers from "./helpers/renderHandlers.ts";
 import socketEventsHelpers from "./helpers/socketEventsHelpers.ts";
 import { sortConversations } from "./helpers/storeHandlers.ts";
+import { emojis } from "./assets/emojis.ts";
 
 declare global {
   interface Window {
@@ -22,6 +23,8 @@ const newMessageBtn = document.getElementById("new-message-btn") as HTMLElement;
 const closeContactsBtn = document.getElementById("close-contacts") as HTMLElement;
 export const conversationsContainer = document.querySelector(".conversations") as HTMLDivElement;
 export const messagesSection = document.querySelector("section.messages") as HTMLElement;
+const emojiBtn = document.getElementById("emoji-btn") as HTMLButtonElement;
+const emojiPicker = document.getElementById("emoji-picker") as HTMLDivElement;
 
 //DOM event listeners
 
@@ -35,6 +38,26 @@ newMessageBtn.addEventListener("click", async () => {
 });
 
 closeContactsBtn.addEventListener("click", renderHandlers.closeContactsList);
+emojiBtn.addEventListener("click", () => {
+  emojiPicker.classList.toggle("scaleOut");
+  setTimeout(() => {
+    emojiPicker.classList.toggle("hidden");
+    emojiPicker.classList.toggle("scaleOut");
+  }, 190);
+});
+
+//fill emojis
+emojis.forEach((emoji) => {
+  const span = document.createElement("span");
+  span.textContent = emoji;
+  span.classList.add("emoji-option", "pointer");
+  span.addEventListener("click", () => {
+    newMessageInput.value += emoji;
+    emojiPicker.classList.add("hidden");
+    newMessageInput.focus();
+  });
+  emojiPicker.appendChild(span);
+});
 
 //socket events
 
