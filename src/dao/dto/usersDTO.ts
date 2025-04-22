@@ -4,9 +4,9 @@ export default class UserDTO implements Omit<UserWithId, "password"> {
   _id: GeneralId;
   full_name: string;
   is_online?: boolean | undefined;
-  last_connection?: DateConstructor | undefined;
+  last_connection?: Date | undefined;
   photo?: string | undefined;
-  signup_date?: DateConstructor | undefined;
+  signup_date?: Date | undefined;
 
   constructor(user: UserWithId) {
     this._id = user._id;

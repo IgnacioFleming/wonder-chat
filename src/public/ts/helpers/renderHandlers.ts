@@ -1,10 +1,10 @@
 import { Socket } from "socket.io";
-import { Conversation, GeneralId, MessageWithId, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
+import { MessageWithId, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
 import { allContactsSection, conversationsContainer } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
-import { getContactHtml, getHourFromDate } from "./utils.ts";
+import { formatLastConnectionDate, getContactHtml, getHourFromDate, setDateLabel } from "./utils.ts";
 import { groupMessagesByDate } from "./groupMessagesByDate.ts";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
 
@@ -52,13 +52,15 @@ const renderSingleMessage = (message: MessageWithId, senderId: string, target: H
   target.appendChild(paragraph);
 };
 
-const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_name" | "photo">) => {
+const renderConversationHeader = ({ full_name, photo, is_online, last_connection }: Omit<UserWithId, "password">) => {
   const headerSection = document.querySelector(".conversation header") as HTMLElement;
   headerSection.classList.add("hasMessages");
   headerSection.innerHTML = `
      <div class="list-item">
         <img class="avatar" src="${photo || "/images/avatar1.png"}" alt="photo" />
-        <p>${full_name}</p>
+        <p>${full_name}
+        <small id="last_connection_label">${is_online ? "online" : formatLastConnectionDate({ is_online: false, last_connection })}</small>
+        </p>
       </div>
       <i class="bi bi-three-dots-vertical pointer" style="font-size: 24px;"></i>
     `;

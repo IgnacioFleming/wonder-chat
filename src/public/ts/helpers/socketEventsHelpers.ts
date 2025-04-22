@@ -25,7 +25,7 @@ const openConversation = (socket: Socket<ServerToClientEvents, ClientToServerEve
   const badgeElement = document.querySelector(`div[data-conversationid="${conversation?._id}"] .badge`);
   if (badgeElement) badgeElement.remove();
   messagesSection.innerHTML = "";
-  renderHandlers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
+  renderHandlers.renderConversationHeader(contact);
   socket.emit("getMessages", { userId, contactId: contact._id });
   socket.on("sendMessages", (result) => {
     if (result.length <= 0) return;

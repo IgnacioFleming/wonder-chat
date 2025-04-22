@@ -30,7 +30,8 @@ export default class SocketManager {
       socket.on("disconnect", async () => {
         for (const [userId, id] of userSocketMap.entries()) {
           if (id === socket.id) {
-            await UserDAO.updateLastConnection(userId, "offline");
+            const result = await UserDAO.updateLastConnection(userId, "offline");
+            socket.broadcast.emit("notifyConnection", result.payload);
             return userSocketMap.delete(userId);
           }
         }
