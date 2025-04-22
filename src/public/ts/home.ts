@@ -8,6 +8,7 @@ import { sortConversations } from "./helpers/storeHandlers.ts";
 import { emojis } from "./assets/emojis.ts";
 import { searchHandler } from "./helpers/domHandlers.ts";
 import { debounce } from "./helpers/utils.ts";
+import { filterUnreadConversations } from "./helpers/filters.ts";
 
 declare global {
   interface Window {
@@ -27,7 +28,10 @@ export const conversationsContainer = document.querySelector(".conversations") a
 export const messagesSection = document.querySelector("section.messages") as HTMLElement;
 const emojiBtn = document.getElementById("emoji-btn") as HTMLButtonElement;
 const emojiPicker = document.getElementById("emoji-picker") as HTMLDivElement;
-const searchConversations = document.querySelector(".search-conversations") as HTMLDivElement;
+const searchConversations = document.getElementById("search-conversations") as HTMLDivElement;
+export const searchContacts = document.getElementById("search-contacts")?.querySelector("input") as HTMLInputElement;
+const sendButton = document.querySelector(".sendButton") as HTMLButtonElement;
+const filtersContainer = document.querySelector(".toggles-container") as HTMLDivElement;
 
 //close emoji-picker with outside click
 
@@ -77,8 +81,9 @@ socket.on("sendConversations", ({ payload }) => {
   renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
 });
 socket.on("sendConversation", ({ payload }) => {
-  const conversationExists = globalState.conversations.some((c) => payload._id === c._id);
-  if (!conversationExists) globalState.conversations.push(payload);
+  const conversationIndex = globalState.conversations.findIndex((c) => payload._id === c._id);
+  if (conversationIndex < 0) globalState.conversations.push(payload);
+  else globalState.conversations[conversationIndex] = payload;
   renderHandlers.sortSingleConversation(socket, payload);
 });
 
@@ -87,7 +92,7 @@ socket.on("sendMessage", (message) => {
   if (globalState.selectedContact.contact?._id === message.author || globalState.selectedContact.contact?._id === message.receiver) {
     renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
   }
-  if (message.author !== globalState.user?._id && message.author === globalState.selectedContact.contact?._id) {
+  if (message.author !== globalState.user?._id) {
     if (globalState.user) socket.emit("updateMessagesToRead", { contactId: message.author, userId: globalState.user?._id });
   }
   messagesSection.scrollTo({
@@ -112,11 +117,17 @@ socket.on("updateMessageStatus", ({ message, status }) => {
 //DOM event listeners
 
 newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
+newMessageInput.addEventListener("keyup", () => {
+  if (newMessageInput.value.length > 0) sendButton.classList.remove("disabled");
+  else sendButton.classList.add("disabled");
+});
+sendButton.addEventListener("click", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
 newMessageBtn.addEventListener("click", async () => {
   if (!globalState.user?._id) return;
   const contacts = await getContacts(globalState.user?._id);
   allContactsSection.classList.replace("hidden", "block");
   if (!contacts || contacts?.length <= 0) return;
+  globalState.contacts = [...contacts];
   renderHandlers.renderListOfContacts(socket, contactsList, contacts);
 });
 
@@ -129,4 +140,15 @@ emojiBtn.addEventListener("click", () => {
   }, 190);
 });
 
-searchConversations.addEventListener("keyup", debounce(searchHandler(socket, conversationsContainer), 500));
+searchConversations.addEventListener("keyup", debounce(searchHandler(socket, conversationsContainer, "conversations"), 500));
+searchContacts.addEventListener("keyup", debounce(searchHandler(socket, contactsList, "contacts"), 500));
+
+filtersContainer.addEventListener("change", (e) => {
+  const target = e.target as HTMLInputElement;
+  if (!target.matches("input[type='radio']")) return;
+  if (target.id === "opt-all") return renderHandlers.renderListOfContacts(socket, conversationsContainer, globalState.conversations);
+  if (target.id === "opt-unread") {
+    const unreadConversations = filterUnreadConversations();
+    return renderHandlers.renderListOfContacts(socket, conversationsContainer, unreadConversations);
+  }
+});

@@ -60,7 +60,6 @@ const renderConversationHeader = ({ full_name, photo }: Pick<UserWithId, "full_n
         <img class="avatar" src="${photo || "/images/avatar1.png"}" alt="photo" />
         <p>${full_name}</p>
       </div>
-      <i class="bi bi-search pointer" style="font-size: 20px;"></i>
       <i class="bi bi-three-dots-vertical pointer" style="font-size: 24px;"></i>
     `;
 };

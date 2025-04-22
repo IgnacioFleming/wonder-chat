@@ -12,15 +12,18 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
     const newMessage = await MessageDAO.create(message);
     if (newMessage.status === STATUSES.SUCCESS) {
       const { status, payload } = await ConversationDAO.updateConversation({ ...message, _id: newMessage.payload?._id });
-      if (status === STATUSES.SUCCESS) socket.emit("sendConversation", { payload });
-      socket.emit("sendMessage", newMessage.payload);
-      const receiverSocketId = userSocketMap.get(message.receiver.toString());
-      if (receiverSocketId) {
-        socketServer.to(receiverSocketId).emit("sendMessage", newMessage.payload);
-        const authorSocketId = userSocketMap.get(message.author.toString());
-        if (authorSocketId) {
-          await MessageDAO.markAllAsReceived(message.receiver);
-          socketServer.to(authorSocketId).emit("updateMessageStatus", { message: newMessage.payload, status: "received" });
+      if (status === STATUSES.SUCCESS) {
+        socket.emit("sendConversation", { payload });
+        socket.emit("sendMessage", newMessage.payload);
+        const receiverSocketId = userSocketMap.get(message.receiver.toString());
+        if (receiverSocketId) {
+          socketServer.to(receiverSocketId).emit("sendMessage", newMessage.payload);
+          socketServer.to(receiverSocketId).emit("sendConversation", { payload });
+          const authorSocketId = userSocketMap.get(message.author.toString());
+          if (authorSocketId) {
+            await MessageDAO.markAllAsReceived(message.receiver);
+            socketServer.to(authorSocketId).emit("updateMessageStatus", { message: newMessage.payload, status: "received" });
+          }
         }
       }
     }

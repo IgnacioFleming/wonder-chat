@@ -2,9 +2,10 @@ import { Socket } from "socket.io";
 import { UserWithId } from "../../../types/types.js";
 import { globalState } from "../store.ts";
 import renderHandlers from "./renderHandlers.ts";
-import { allContactsSection, messagesSection } from "../home.ts";
-import { isToday } from "./utils.ts";
+import { allContactsSection, messagesSection, searchContacts } from "../home.ts";
+import { isToday, markConversationRead } from "./utils.ts";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
+import { isKeyboardEvent } from "./typeGuards.ts";
 
 const userId = globalState.user?._id;
 const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
@@ -18,23 +19,26 @@ const setSelectedContact = (selectedContact: Omit<UserWithId, "password">) => {
 
 const openConversation = (socket: Socket<ServerToClientEvents, ClientToServerEvents>, contact: Omit<UserWithId, "password">) => {
   if (!userId || contact._id === globalState.selectedContact.contact?._id) return;
+  searchContacts.value = "";
   setSelectedContact(contact);
   messagesSection.innerHTML = "";
   renderHandlers.renderConversationHeader({ full_name: contact.full_name, photo: contact.photo });
   socket.emit("getMessages", { userId, contactId: contact._id });
   socket.on("sendMessages", (result) => {
     if (result.length <= 0) return;
-    const lastMessageDate = result[result.length - 1].date;
+    const lastMessage = result[result.length - 1];
+    const lastMessageDate = lastMessage.date;
     if (lastMessageDate) globalState.selectedContact.lastMessageDate = new Date(lastMessageDate);
     renderHandlers.renderMessages(result, userId.toString());
+    if (lastMessage.author === contact._id) markConversationRead(userId, contact._id);
     socket.emit("updateMessagesToRead", { userId, contactId: contact._id });
     return;
   });
 };
 
-const sendMessage = (e: KeyboardEvent, socket: Socket, newMessageInput: HTMLTextAreaElement) => {
+const sendMessage = (e: KeyboardEvent | MouseEvent, socket: Socket, newMessageInput: HTMLTextAreaElement) => {
   if (!userId) return;
-  if (e.key !== "Enter") return;
+  if (isKeyboardEvent(e) && e.key !== "Enter") return;
   e.preventDefault();
   const content = newMessageInput.value.trim();
   if (!content) return;
