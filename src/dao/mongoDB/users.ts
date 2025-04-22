@@ -1,6 +1,6 @@
 import { PersistResult } from "../../types/DAO.js";
 import { STATUSES } from "../../types/enums.js";
-import type { User, UserWithId } from "../../types/types.d.ts";
+import type { GeneralId, User, UserWithId } from "../../types/types.d.ts";
 import { userModel } from "../models/users.ts";
 
 export default class UserDAO {
@@ -46,6 +46,17 @@ export default class UserDAO {
       const result = await userModel.create(body);
       if (!result?._id) return { status: STATUSES.ERROR, error: "User not found." };
       return { status: STATUSES.SUCCESS, payload: body };
+    } catch (error) {
+      throw error;
+    }
+  }
+  static async updateLastConnection(id: string, changeStatus: "online" | "offline") {
+    try {
+      console.log(id);
+      const query = changeStatus === "online" ? { is_online: true } : { is_online: false, last_connection: new Date() };
+      console.log(query);
+      await userModel.findByIdAndUpdate(id, { $set: query });
+      return { status: STATUSES.SUCCESS, payload: "User connection updated" };
     } catch (error) {
       throw error;
     }
