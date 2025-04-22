@@ -1,4 +1,3 @@
-import { UpdateWriteOpResult } from "mongoose";
 import { conversationSchema } from "../../schemas/conversations.ts";
 import { PersistResult } from "../../types/DAO.js";
 import { Conversation, GeneralId, PopulatedConversation, PopulatedConversationWithId, MessageStatus, MessageWithId, ConversationWithId } from "../../types/types.js";
@@ -10,8 +9,8 @@ export default class ConversationDAO {
     const conversations = await conversationModel.find({ participants: id }).populate("participants").lean<PopulatedConversation>();
     return { status: STATUSES.SUCCESS, payload: conversations };
   }
-  static async getByParticipants(participants: GeneralId[]): Promise<PersistResult<Conversation>> {
-    const conversation = await conversationModel.findOne({ participants: { $all: participants } }).lean<Conversation>();
+  static async getByParticipants(participants: GeneralId[]): Promise<PersistResult<ConversationWithId>> {
+    const conversation = await conversationModel.findOne({ participants: { $all: participants } }).lean<ConversationWithId>();
     if (!conversation) return { status: STATUSES.ERROR, error: "Conversation not found" };
     return { status: STATUSES.SUCCESS, payload: conversation };
   }
@@ -21,15 +20,18 @@ export default class ConversationDAO {
     const result = await conversationModel.create(data);
     return { status: STATUSES.SUCCESS, payload: { ...conversation, _id: result.id } };
   }
-  static async replaceLastMessage(props: { participants: GeneralId[]; author: GeneralId; lastMessageContent: string; lastMessageId: GeneralId; status: MessageStatus }): Promise<PersistResult<UpdateWriteOpResult>> {
-    const newLastConversation = await conversationModel.updateOne({ participants: { $all: props.participants } }, { $set: { lastMessage: props.lastMessageContent, date: new Date(), lastMessageId: props.lastMessageId, status: props.status, author: props.author } });
-    return { status: STATUSES.SUCCESS, payload: newLastConversation };
+  static async replaceLastMessage(params: { participants: GeneralId[]; author: GeneralId; lastMessageContent: string; lastMessageId: GeneralId; status: MessageStatus }): Promise<PersistResult<Conversation>> {
+    const replacedConversation = { lastMessage: params.lastMessageContent, date: new Date(), lastMessageId: params.lastMessageId, status: params.status, author: params.author };
+    await conversationModel.updateOne({ participants: { $all: params.participants } }, { $set: replacedConversation });
+    return { status: STATUSES.SUCCESS, payload: { ...replacedConversation, participants: params.participants } };
   }
   static async updateConversation(body: MessageWithId): Promise<PersistResult<PopulatedConversationWithId>> {
     const { status, payload } = await this.getByParticipants([body.author, body.receiver]);
     if (status === STATUSES.SUCCESS) {
-      this.replaceLastMessage({ participants: [body.author, body.receiver], author: body.author, lastMessageContent: body.content, lastMessageId: body._id, status: body.status || "sent" });
-      return { status: STATUSES.SUCCESS, payload: await new conversationModel(payload).populate("participants") };
+      const replacedlastMessage = await this.replaceLastMessage({ participants: [body.author, body.receiver], author: body.author, lastMessageContent: body.content, lastMessageId: body._id, status: body.status || "sent" });
+      if (replacedlastMessage.status === STATUSES.SUCCESS) {
+        return { status: STATUSES.SUCCESS, payload: await new conversationModel({ ...replacedlastMessage.payload, _id: payload._id }).populate("participants") };
+      }
     }
     const newConversation: Conversation = {
       participants: [body.author, body.receiver],

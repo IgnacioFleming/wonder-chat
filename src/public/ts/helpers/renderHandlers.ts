@@ -93,7 +93,7 @@ const sortSingleConversation = (socket: Socket<ClientToServerEvents, ServerToCli
   const conversationDiv = document.querySelector(`.conversations .contact[data-conversationid="${conversation._id}"]`);
   if (conversationDiv) {
     conversationDiv.remove();
-    conversationsContainer.prepend(conversationDiv);
+    renderContact(socket, conversation, conversationsContainer, true);
   } else {
     renderContact(socket, conversation, conversationsContainer, true);
   }
