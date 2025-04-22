@@ -6,6 +6,8 @@ import renderHandlers from "./helpers/renderHandlers.ts";
 import socketEventsHelpers from "./helpers/socketEventsHelpers.ts";
 import { sortConversations } from "./helpers/storeHandlers.ts";
 import { emojis } from "./assets/emojis.ts";
+import { searchHandler } from "./helpers/domHandlers.ts";
+import { debounce } from "./helpers/utils.ts";
 
 declare global {
   interface Window {
@@ -25,25 +27,22 @@ export const conversationsContainer = document.querySelector(".conversations") a
 export const messagesSection = document.querySelector("section.messages") as HTMLElement;
 const emojiBtn = document.getElementById("emoji-btn") as HTMLButtonElement;
 const emojiPicker = document.getElementById("emoji-picker") as HTMLDivElement;
+const searchConversations = document.querySelector(".search-conversations") as HTMLDivElement;
 
-//DOM event listeners
+//close emoji-picker with outside click
 
-newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
-newMessageBtn.addEventListener("click", async () => {
-  if (!globalState.user?._id) return;
-  const contacts = await getContacts(globalState.user?._id);
-  allContactsSection.classList.replace("hidden", "block");
-  if (!contacts || contacts?.length <= 0) return;
-  renderHandlers.renderListOfContacts(socket, contactsList, contacts);
-});
-
-closeContactsBtn.addEventListener("click", renderHandlers.closeContactsList);
-emojiBtn.addEventListener("click", () => {
-  emojiPicker.classList.toggle("scaleOut");
-  setTimeout(() => {
-    emojiPicker.classList.toggle("hidden");
-    emojiPicker.classList.toggle("scaleOut");
-  }, 190);
+document.addEventListener("click", (e) => {
+  const target = e.target as HTMLElement;
+  const clickedInsidePicker = emojiPicker.contains(target);
+  const clickedInsideInput = newMessageInput.contains(target);
+  const clickedEmojiBtn = emojiBtn.contains(target);
+  if (!clickedEmojiBtn && !clickedInsideInput && !clickedInsidePicker) {
+    emojiPicker.classList.add("scaleOut");
+    setTimeout(() => {
+      emojiPicker.classList.add("hidden");
+      emojiPicker.classList.remove("scaleOut");
+    }, 190);
+  }
 });
 
 //fill emojis
@@ -53,7 +52,6 @@ emojis.forEach((emoji) => {
   span.classList.add("emoji-option", "pointer");
   span.addEventListener("click", () => {
     newMessageInput.value += emoji;
-    emojiPicker.classList.add("hidden");
     newMessageInput.focus();
   });
   emojiPicker.appendChild(span);
@@ -110,3 +108,25 @@ socket.on("updateMessageStatus", ({ message, status }) => {
     conversationIcon.classList.add("msg-read");
   }
 });
+
+//DOM event listeners
+
+newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));
+newMessageBtn.addEventListener("click", async () => {
+  if (!globalState.user?._id) return;
+  const contacts = await getContacts(globalState.user?._id);
+  allContactsSection.classList.replace("hidden", "block");
+  if (!contacts || contacts?.length <= 0) return;
+  renderHandlers.renderListOfContacts(socket, contactsList, contacts);
+});
+
+closeContactsBtn.addEventListener("click", renderHandlers.closeContactsList);
+emojiBtn.addEventListener("click", () => {
+  emojiPicker.classList.toggle("scaleOut");
+  setTimeout(() => {
+    emojiPicker.classList.toggle("hidden");
+    emojiPicker.classList.toggle("scaleOut");
+  }, 190);
+});
+
+searchConversations.addEventListener("keyup", debounce(searchHandler(socket, conversationsContainer), 500));
