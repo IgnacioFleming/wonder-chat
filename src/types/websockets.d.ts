@@ -11,6 +11,7 @@ export interface ServerToClientEvents {
   sendConversations: ServerCallback<{ payload: PopulatedConversationWithId[] }>;
   sendConversation: ServerCallback<{ payload: PopulatedConversationWithId }>;
   updateMessageStatus: ServerCallback<{ message: MessageWithId; status: (typeof MSG_STATUS)[keyof typeof MSG_STATUS] }>;
+  notifyConnection: ServerCallback<{ userId: string; is_online: boolean; last_connection: Date | undefined }>;
 }
 
 export interface ClientToServerEvents {

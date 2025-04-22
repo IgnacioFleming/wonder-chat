@@ -117,6 +117,8 @@ socket.on("updateMessageStatus", ({ message, status }) => {
   }
 });
 
+socket.on("notifyConnection", (result) => console.log(result));
+
 //DOM event listeners
 
 newMessageInput.addEventListener("keydown", (e) => socketEventsHelpers.sendMessage(e, socket, newMessageInput));

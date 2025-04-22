@@ -8,7 +8,7 @@ import { GeneralId } from "../types/types.js";
 
 export const userSocketMap = new Map<string, string>();
 export default class SocketManager {
-  private socketServer: Server<ServerToClientEvents, ClientToServerEvents>;
+  private socketServer: Server<ClientToServerEvents, ServerToClientEvents>;
   constructor(server: HttpServer) {
     this.socketServer = new Server(server);
   }
@@ -21,7 +21,8 @@ export default class SocketManager {
     this.socketServer.on("connection", (socket) => {
       socket.on("register", async (userId: string) => {
         userSocketMap.set(userId, socket.id);
-        await UserDAO.updateLastConnection(userId, "online");
+        const result = await UserDAO.updateLastConnection(userId, "online");
+        socket.broadcast.emit("notifyConnection", result.payload);
         console.log(`User ${userId} conectado con socket ${socket.id}`);
       });
       messagesHandler(socket, this.socketServer);
