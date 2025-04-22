@@ -42,7 +42,7 @@ export interface MessageWithId extends Message {
   _id: GeneralId;
 }
 
-export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: GeneralId[]; lastMessage: string; lastMessageId: GeneralId };
+export type Conversation = Omit<Message, "isSent" | "receiver" | "content"> & { participants: GeneralId[]; lastMessage: string; lastMessageId: GeneralId; unreadMessages?: number };
 
 export type ConversationWithId = Conversation & { _id: GeneralId };
 

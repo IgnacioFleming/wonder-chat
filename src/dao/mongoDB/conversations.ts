@@ -20,15 +20,16 @@ export default class ConversationDAO {
     const result = await conversationModel.create(data);
     return { status: STATUSES.SUCCESS, payload: { ...conversation, _id: result.id } };
   }
-  static async replaceLastMessage(params: { participants: GeneralId[]; author: GeneralId; lastMessageContent: string; lastMessageId: GeneralId; status: MessageStatus }): Promise<PersistResult<Conversation>> {
-    const replacedConversation = { lastMessage: params.lastMessageContent, date: new Date(), lastMessageId: params.lastMessageId, status: params.status, author: params.author };
+  static async replaceLastMessage(params: { participants: GeneralId[]; author: GeneralId; lastMessageContent: string; lastMessageId: GeneralId; status: MessageStatus; unreadMessages: number }): Promise<PersistResult<Conversation>> {
+    console.log("reemplazando los unreadmessages", params.unreadMessages);
+    const replacedConversation = { lastMessage: params.lastMessageContent, date: new Date(), lastMessageId: params.lastMessageId, status: params.status, author: params.author, unreadMessages: params.unreadMessages };
     await conversationModel.updateOne({ participants: { $all: params.participants } }, { $set: replacedConversation });
     return { status: STATUSES.SUCCESS, payload: { ...replacedConversation, participants: params.participants } };
   }
   static async updateConversation(body: MessageWithId): Promise<PersistResult<PopulatedConversationWithId>> {
     const { status, payload } = await this.getByParticipants([body.author, body.receiver]);
     if (status === STATUSES.SUCCESS) {
-      const replacedlastMessage = await this.replaceLastMessage({ participants: [body.author, body.receiver], author: body.author, lastMessageContent: body.content, lastMessageId: body._id, status: body.status || "sent" });
+      const replacedlastMessage = await this.replaceLastMessage({ participants: [body.author, body.receiver], author: body.author, lastMessageContent: body.content, lastMessageId: body._id, status: body.status || "sent", unreadMessages: payload.unreadMessages ? payload.unreadMessages + 1 : 1 });
       if (replacedlastMessage.status === STATUSES.SUCCESS) {
         return { status: STATUSES.SUCCESS, payload: await new conversationModel({ ...replacedlastMessage.payload, _id: payload._id }).populate("participants") };
       }
@@ -38,6 +39,7 @@ export default class ConversationDAO {
       author: body.author,
       lastMessage: body.content,
       lastMessageId: body._id,
+      unreadMessages: 1,
     };
     const result = await this.create(newConversation);
     if (result.status !== STATUSES.SUCCESS) return { status: result.status, error: result.error || "There was an error during the process" };

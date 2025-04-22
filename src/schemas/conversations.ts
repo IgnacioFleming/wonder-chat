@@ -7,4 +7,5 @@ export const conversationSchema = z.object({
   lastMessageId: z.string(),
   date: z.date().optional(),
   isRead: z.boolean().optional(),
+  unreadMessages: z.number().optional(),
 });

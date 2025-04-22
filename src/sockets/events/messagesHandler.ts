@@ -17,8 +17,8 @@ export const messagesHandler = (socket: Socket<ClientToServerEvents, ServerToCli
         socket.emit("sendMessage", newMessage.payload);
         const receiverSocketId = userSocketMap.get(message.receiver.toString());
         if (receiverSocketId) {
-          socketServer.to(receiverSocketId).emit("sendMessage", newMessage.payload);
           socketServer.to(receiverSocketId).emit("sendConversation", { payload });
+          socketServer.to(receiverSocketId).emit("sendMessage", newMessage.payload);
           const authorSocketId = userSocketMap.get(message.author.toString());
           if (authorSocketId) {
             await MessageDAO.markAllAsReceived(message.receiver);

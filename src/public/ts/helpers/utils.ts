@@ -41,12 +41,11 @@ export const getContactHtml = (item: UserWithId | PopulatedConversationWithId, c
         `;
     let lastMessageHtml = `  ${
       lastMessageContent
-        ? `<p class="last-message">
-          <span>
-          ${isPopulatedConversation(item) && item.author === globalState.user?._id ? `<i data-conversationId="${item.lastMessageId}" class="bi bi-${item.status === "sent" ? "check2" : "check2-all"} msg-check ${item.status === "read" && "msg-read"}"></i>` : ""}
-          </span>
-          ${lastMessageContent}
-          </p>`
+        ? `<div class="last-message">
+          ${isPopulatedConversation(item) && item.author === globalState.user?._id ? `<span><i data-conversationId="${item.lastMessageId}" class="bi bi-${item.status === "sent" ? "check2" : "check2-all"} msg-check ${item.status === "read" && "msg-read"}"></i></span>` : ""}
+          <p>${lastMessageContent}</p>
+          ${item.author !== globalState.user?._id && item.unreadMessages && item.unreadMessages > 0 ? `<span class="badge text-bg-primary rounded-pill">${item.unreadMessages}</span>` : ""}
+          </div>`
         : ""
     }</div>`;
     html += conversationDateHtml += lastMessageHtml;

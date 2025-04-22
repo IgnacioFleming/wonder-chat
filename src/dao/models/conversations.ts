@@ -10,6 +10,7 @@ const conversationSchema = new mongoose.Schema({
   author: { type: mongoose.SchemaTypes.ObjectId, ref: "users", required: true },
   date: { type: Date, default: () => new Date() },
   status: { type: String, enum: Object.values(MSG_STATUS), default: MSG_STATUS.SENT },
+  unreadMessages: { type: Number, default: 0 },
 });
 
 export const conversationModel = mongoose.model(collection, conversationSchema);

@@ -92,7 +92,15 @@ socket.on("sendMessage", (message) => {
   if (globalState.selectedContact.contact?._id === message.author || globalState.selectedContact.contact?._id === message.receiver) {
     renderHandlers.renderSingleMessage(message, globalState.user?._id.toString(), messagesSection);
   }
-  if (message.author !== globalState.user?._id) {
+  if (globalState.selectedContact.contact?._id === message.author) {
+    console.log(globalState.conversations);
+    console.log(globalState.conversations[0].lastMessageId);
+    console.log(message._id);
+    const conversationId = globalState.conversations.find((c) => c.lastMessageId === message._id)?._id;
+    console.log(conversationId);
+    const badgeElement = document.querySelector(`div[data-conversationid="${conversationId}"] .badge`);
+    console.log(badgeElement);
+    if (badgeElement) badgeElement.remove();
     if (globalState.user) socket.emit("updateMessagesToRead", { contactId: message.author, userId: globalState.user?._id });
   }
   messagesSection.scrollTo({
