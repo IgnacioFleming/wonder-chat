@@ -35,6 +35,18 @@
   height: 60px;
 }
 
+.sidebar header .sidebar-header-btns {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar header .sidebar-header-btns .btn {
+  padding: 0;
+}
+.sidebar header .sidebar-header-btns .btn.show {
+  border: none;
+}
+
 .sidebar header h3 {
   flex-grow: 1;
 }

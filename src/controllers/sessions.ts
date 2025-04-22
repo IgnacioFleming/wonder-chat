@@ -11,4 +11,12 @@ export default class SessionsController {
     const user = new UserDTO(req.user as UserWithId);
     responses.successResponse(res, user);
   };
+  static logout: Middleware = (req, res) => {
+    if (req.session)
+      return req.session.destroy((err) => {
+        if (err) return responses.errorResponse(res, { name: "logout", message: err });
+        res.clearCookie("connect.sid");
+        return responses.successResponse(res, "User logged out");
+      });
+  };
 }

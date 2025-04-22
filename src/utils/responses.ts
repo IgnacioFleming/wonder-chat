@@ -10,7 +10,7 @@ const errorResponse: Response = (res, error) => {
 };
 
 const unauthorizedResponse: Response = (res) => {
-  res.status(401).json({ status: STATUSES.ERROR, error: "Unauthorized" });
+  res.redirect("/login");
 };
 
 export default { successResponse, errorResponse, unauthorizedResponse };

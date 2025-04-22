@@ -9,6 +9,7 @@ import { emojis } from "./assets/emojis.ts";
 import { searchHandler } from "./helpers/domHandlers.ts";
 import { debounce, formatLastConnectionDate, resizeMessageInput } from "./helpers/utils.ts";
 import { filterUnreadConversations } from "./helpers/filters.ts";
+import { STATUSES } from "../../types/enums.js";
 
 declare global {
   interface Window {
@@ -32,6 +33,7 @@ const searchConversations = document.getElementById("search-conversations") as H
 export const searchContacts = document.getElementById("search-contacts")?.querySelector("input") as HTMLInputElement;
 const sendButton = document.querySelector(".sendButton") as HTMLButtonElement;
 const filtersContainer = document.querySelector(".toggles-container") as HTMLDivElement;
+const logoutBtn = document.getElementById("logout-btn") as HTMLDivElement;
 
 //close emoji-picker with outside click
 
@@ -170,3 +172,14 @@ filtersContainer.addEventListener("change", (e) => {
     return renderHandlers.renderListOfContacts(socket, conversationsContainer, unreadConversations);
   }
 });
+
+const handleLogout = () => {
+  fetch("/api/sessions/logout", {
+    method: "POST",
+  })
+    .then((res) => res.json())
+    .then(({ status }) => status === STATUSES.SUCCESS && (window.location.href = "/login"))
+    .catch((err) => console.log(err));
+};
+
+logoutBtn.addEventListener("click", handleLogout);
