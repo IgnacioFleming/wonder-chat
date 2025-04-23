@@ -15,6 +15,7 @@ import { initializePassport } from "./auth/passport.ts";
 import session from "express-session";
 import passport from "passport";
 import { mongoStore } from "./config/sessions.ts";
+import path from "node:path";
 
 const app = express();
 export const server = createServer(app);
@@ -22,7 +23,7 @@ reloadClient(app);
 mongoose.connect(config.mongo_url_dev);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(__dirname + "/dist/public"));
+app.use(express.static(path.join(__dirname + "public")));
 
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
