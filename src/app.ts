@@ -23,7 +23,7 @@ reloadClient(app);
 mongoose.connect(config.mongo_url_dev);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "dist/public")));
+app.use(express.static(path.join(__dirname, "dist", "public")));
 
 console.log("static path", path.join(__dirname, "public"));
 
