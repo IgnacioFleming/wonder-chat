@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "copyFiles": "xcopy src\\public dist\\public /E /I /Y && xcopy src\\views dist\\views /E /I /Y",
-    "build": "tsc && npm run copyFiles",
+    "copyFilesProd": "cp -r src/public dist/public && cp -r src/views dist/views",
+    "build": "tsc && npm run copyFilesProd",
     "lint": "npx eslint",
     "watch": "concurrently -n \"TSC,COPY\" -c \"cyan,yellow\" \"tsc --watch\" \"npx chokidar \\\"src/public/**/*\\\" \\\"src/views/**/*\\\" -c \\\"npm run copyFiles\\\"\"",
     "dev": "cross-env NODE_ENV=development concurrently -k -n \"BUILD,SERVER\" -c \"blue,green\" \"npm run watch\" \"nodemon --watch src --ext ts,handlebars --exec node --loader ts-node/esm src/index.ts\"",
