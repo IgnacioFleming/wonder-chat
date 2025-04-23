@@ -11,7 +11,7 @@
             <i class="bi bi-three-dots-vertical pointer" style="font-size: 24px;"></i>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item pointer" href="#">Profile</a></li>
+            <li><div class="dropdown-item pointer" id="profile-btn">Profile</div></li>
             <li><div class="dropdown-item pointer" id="logout-btn">Log out</div></li>
           </ul>
         </div>
@@ -46,6 +46,26 @@
         </div>
       </header>
       <div id="contacts-list" class="list-group list-group-flush"></div>
+    </section>
+    <section class="profileContainer hidden">
+      <h2>Profile</h2>
+      <div class="profile-img-container">
+        <img id="profile-image" src="{{url}}" alt="profile image" />
+        <label for="avatar-upload" class="edit-profile-img">
+          <i class="bi bi-pencil-square"></i>
+        </label>
+        <input id="avatar-upload" type="file" name="file" class="hidden-input" accept="image/*" />
+      </div>
+      <div class="upload-file">
+        <p id="filename-preview"></p>
+        <button id="submit-file-btn" class="btn btn-success btn-sm hidden-btn">Upload</button>
+      </div>
+      <div>
+        Name:
+        <span>{{name}}</span>
+      </div>
+
+      <button id="back-to-chats" class="btn btn-primary">Back to Chats</button>
     </section>
 
   </aside>

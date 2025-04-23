@@ -6,10 +6,10 @@ import renderHandlers from "./helpers/renderHandlers.ts";
 import socketEventsHelpers from "./helpers/socketEventsHelpers.ts";
 import { sortConversations } from "./helpers/storeHandlers.ts";
 import { emojis } from "./assets/emojis.ts";
-import { searchHandler } from "./helpers/domHandlers.ts";
+import { handleSubmitFile, searchHandler } from "./helpers/domHandlers.ts";
 import { debounce, formatLastConnectionDate, resizeMessageInput } from "./helpers/utils.ts";
 import { filterUnreadConversations } from "./helpers/filters.ts";
-import { STATUSES } from "../../types/enums.js";
+import { logout } from "./services/sessions.ts";
 
 declare global {
   interface Window {
@@ -20,6 +20,7 @@ declare global {
 if (!globalState.user || !globalState.user._id) window.location.href = "/login";
 
 //DOM elements
+
 export const newMessageInput = document.getElementById("newMessage") as HTMLTextAreaElement;
 export const allContactsSection = document.getElementById("contacts") as HTMLElement;
 const contactsList = document.getElementById("contacts-list") as HTMLDivElement;
@@ -34,6 +35,11 @@ export const searchContacts = document.getElementById("search-contacts")?.queryS
 const sendButton = document.querySelector(".sendButton") as HTMLButtonElement;
 const filtersContainer = document.querySelector(".toggles-container") as HTMLDivElement;
 const logoutBtn = document.getElementById("logout-btn") as HTMLDivElement;
+const profileBtn = document.getElementById("profile-btn") as HTMLDivElement;
+const filename = document.getElementById("filename-preview") as HTMLDivElement;
+const avatarInput = document.getElementById("avatar-upload") as HTMLInputElement;
+export const profileContainer = document.querySelector(".profileContainer") as HTMLDivElement;
+const backToChatsBtn = document.getElementById("back-to-chats") as HTMLButtonElement;
 
 //close emoji-picker with outside click
 
@@ -173,13 +179,23 @@ filtersContainer.addEventListener("change", (e) => {
   }
 });
 
-const handleLogout = () => {
-  fetch("/api/sessions/logout", {
-    method: "POST",
-  })
-    .then((res) => res.json())
-    .then(({ status }) => status === STATUSES.SUCCESS && (window.location.href = "/login"))
-    .catch((err) => console.log(err));
-};
+logoutBtn.addEventListener("click", logout);
+profileBtn.addEventListener("click", () => renderHandlers.showProfile());
 
-logoutBtn.addEventListener("click", handleLogout);
+const uploadBtn = document.querySelector(".hidden-btn");
+const submitFileBtn = document.getElementById("submit-file-btn");
+
+avatarInput.addEventListener("change", () => {
+  if (avatarInput.files) filename.innerText = avatarInput.files[0].name;
+  if (uploadBtn) uploadBtn.classList.remove("hidden-btn");
+});
+submitFileBtn?.addEventListener("click", () => handleSubmitFile(avatarInput.files?.[0]));
+
+backToChatsBtn.addEventListener("click", () => {
+  if (profileContainer.classList.contains("hidden")) return;
+  profileContainer.classList.add("close");
+  setTimeout(() => {
+    profileContainer.classList.add("hidden");
+    profileContainer.classList.remove("close");
+  }, 180);
+});

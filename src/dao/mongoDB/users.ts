@@ -60,4 +60,13 @@ export default class UserDAO {
       throw error;
     }
   }
+
+  static async updatePhoto(id: GeneralId, url: string) {
+    try {
+      await userModel.findByIdAndUpdate(id, { $set: { photo: url } });
+      return { status: STATUSES.SUCCESS, payload: "User photo updated" };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

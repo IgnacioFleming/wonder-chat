@@ -1,12 +1,13 @@
 import { Socket } from "socket.io";
 import { MessageWithId, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
-import { allContactsSection, conversationsContainer } from "../home.ts";
+import { allContactsSection, conversationsContainer, profileContainer } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
 import { formatLastConnectionDate, getContactHtml, getHourFromDate, setDateLabel } from "./utils.ts";
 import { groupMessagesByDate } from "./groupMessagesByDate.ts";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
+import { handleSubmitFile } from "./domHandlers.ts";
 
 const addHeading = (text: string, target: HTMLElement) => {
   const heading = document.createElement("h6");
@@ -57,7 +58,7 @@ const renderConversationHeader = ({ full_name, photo, is_online, last_connection
   headerSection.classList.add("hasMessages");
   headerSection.innerHTML = `
      <div class="list-item">
-        <img class="avatar" src="${photo || "/images/avatar1.png"}" alt="photo" />
+        <img class="avatar" src="${photo || "/images/avatar1.webp"}" alt="photo" />
         <p>${full_name}
         <small id="last_connection_label">${is_online ? "online" : formatLastConnectionDate({ is_online: false, last_connection })}</small>
         </p>
@@ -112,6 +113,10 @@ const setConversationFooterVisible = () => {
   footer.classList.replace("hidden", "visible");
 };
 
+const showProfile = () => {
+  profileContainer.classList.remove("hidden");
+};
+
 export default {
   renderMessages,
   renderSingleMessage,
@@ -121,4 +126,5 @@ export default {
   setConversationFooterVisible,
   addHeading,
   sortSingleConversation,
+  showProfile,
 };

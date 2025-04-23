@@ -4,8 +4,8 @@ import { auth } from "../middleware/auth.ts";
 
 const router = Router();
 
-router.get("/", auth, ViewsController.home);
 router.get("/login", ViewsController.login);
 router.get("/register", ViewsController.register);
+router.get("/", auth, ViewsController.home);
 
 export default router;

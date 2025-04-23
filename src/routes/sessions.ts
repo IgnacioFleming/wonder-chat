@@ -1,7 +1,7 @@
 import { Router } from "express";
 import SessionsController from "../controllers/sessions.ts";
 import passport from "passport";
-import { STATUSES, STRATEGIES } from "../types/enums.js";
+import { STRATEGIES } from "../types/enums.js";
 import { auth } from "../middleware/auth.ts";
 
 const router = Router();

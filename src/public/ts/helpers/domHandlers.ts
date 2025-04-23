@@ -3,6 +3,7 @@ import { ClientToServerEvents, ServerToClientEvents } from "../../../types/webso
 import { filterConversationsByFullName, filterContactsByFullName } from "./filters.ts";
 import renderHandlers from "./renderHandlers.ts";
 import { globalState } from "../store.ts";
+import { updateUserPhoto } from "../services/users.ts";
 
 export const searchHandler = (socket: Socket<ClientToServerEvents, ServerToClientEvents>, element: HTMLElement, items: "conversations" | "contacts") => {
   let lastSearch = "";
@@ -18,4 +19,21 @@ export const searchHandler = (socket: Socket<ClientToServerEvents, ServerToClien
       renderHandlers.renderListOfContacts(socket, element, items === "conversations" ? globalState.conversations : globalState.contacts);
     }
   };
+};
+
+export const handleSubmitFile = async (file: File | undefined) => {
+  if (!file) return;
+  const formData = new FormData();
+  formData.append("file", file);
+  const url = await updateUserPhoto(formData);
+  if (url) {
+    const profileImg = document.getElementById("profile-image") as HTMLImageElement | undefined;
+    if (profileImg) {
+      const imgDescription = document.getElementById("filename-preview") as HTMLParagraphElement;
+      imgDescription.innerText = "";
+      const uploadBtn = document.getElementById("submit-file-btn") as HTMLButtonElement;
+      uploadBtn.classList.add("hidden-btn");
+      setTimeout(() => (profileImg.src = `${url}?t=${Date.now()}`), 1500);
+    }
+  }
 };
