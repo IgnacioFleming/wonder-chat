@@ -19,9 +19,13 @@
 
 .container > div {
   width: 80%;
+  @media (max-width: 800px) {
+    width: 100%;
+  }
 }
 
 .authForm {
+  padding: 10px;
   background-color: var(--white);
   border-radius: 25px;
   display: flex;
@@ -33,6 +37,7 @@
 
 .authForm h2 {
   color: var(--main-blue);
+  font-size: 40px;
 }
 
 .authForm .btn-container {
@@ -41,5 +46,5 @@
 }
 
 .authForm input {
-  width: 300px;
+  max-width: 300px;
 }

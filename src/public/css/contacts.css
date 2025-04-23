@@ -1,0 +1,25 @@
+.conversations .contact .last-message {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.conversations .contact .last-message p {
+  font-size: 14px;
+  font-weight: 300;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--dark-gray);
+  flex-grow: 1;
+}
+
+.conversations .contact .last-message .msg-check {
+  font-size: 16px;
+}
+
+.contact {
+  cursor: pointer;
+  padding-block: 14px;
+}
+.contact:hover {
+  background-color: var(--main-gray);
+}

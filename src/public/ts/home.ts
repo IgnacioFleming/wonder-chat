@@ -40,6 +40,8 @@ const filename = document.getElementById("filename-preview") as HTMLDivElement;
 const avatarInput = document.getElementById("avatar-upload") as HTMLInputElement;
 export const profileContainer = document.querySelector(".profileContainer") as HTMLDivElement;
 const backToChatsBtn = document.getElementById("back-to-chats") as HTMLButtonElement;
+export const sidebar = document.querySelector(".mainContainer .sidebar") as HTMLElement;
+const burguerBtn = sidebar.querySelector(".burger-btn-container .burger-btn") as HTMLElement;
 
 //close emoji-picker with outside click
 
@@ -199,3 +201,5 @@ backToChatsBtn.addEventListener("click", () => {
     profileContainer.classList.remove("close");
   }, 180);
 });
+
+burguerBtn.addEventListener("click", renderHandlers.toggleShowSidebar);

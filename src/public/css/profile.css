@@ -1,0 +1,51 @@
+.profileContainer {
+  width: 100%;
+  height: 100%;
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  position: absolute;
+  margin: -20px;
+  padding-block: 20px;
+  animation: contacts-slideIn 0.3s ease-in-out;
+}
+
+.profileContainer.close {
+  animation: contacts-slideOut 0.3s ease-in-out;
+}
+
+.profileContainer.hidden {
+  display: none;
+}
+.profile-img-container {
+  position: relative;
+}
+.edit-profile-img {
+  position: absolute;
+  bottom: 0;
+  right: 10%;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hidden-input {
+  display: none;
+}
+.upload-file {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.hidden-btn {
+  display: none;
+}
+
+#profile-image {
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+}

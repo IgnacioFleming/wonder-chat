@@ -1,94 +1,96 @@
 <div class="mainContainer">
+  <div class="relative-container">
+    <aside class="sidebar">
+      <div class="burger-btn-container">
+        <i class="bi bi-list burger-btn"></i>
 
-  <aside class="sidebar">
-
-    <header>
-      <h3>Chats</h3>
-      <div class="sidebar-header-btns">
-        <i id="new-message-btn" class="bi bi-chat-right-text pointer" style="font-size: 24px;"></i>
-        <div class="dropdown">
-          <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-three-dots-vertical pointer" style="font-size: 24px;"></i>
-          </button>
-          <ul class="dropdown-menu">
-            <li><div class="dropdown-item pointer" id="profile-btn">Profile</div></li>
-            <li><div class="dropdown-item pointer" id="logout-btn">Log out</div></li>
-          </ul>
+      </div>
+      <header>
+        <h3 class="sidebar-header">Chats</h3>
+        <div class="sidebar-header-btns">
+          <i id="new-message-btn" class="bi bi-chat-right-text pointer" style="font-size: 24px;"></i>
+          <div class="dropdown">
+            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical pointer" style="font-size: 24px;"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><div class="dropdown-item pointer" id="profile-btn">Profile</div></li>
+              <li><div class="dropdown-item pointer" id="logout-btn">Log out</div></li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <div class="filters">
-      <div id="search-conversations" class="search-conversations">
-        <input type="text" class="form-control" placeholder="Search" />
-        <i class="bi bi-search search-icon"></i>
-      </div>
-      <div class="toggles-container">
-        <input type="radio" class="btn-check" name="options" id="opt-all" autocomplete="off" checked />
-        <label class="btn custom-toggle" for="opt-all">All</label>
-
-        <input type="radio" class="btn-check" name="options" id="opt-unread" autocomplete="off" />
-        <label class="btn custom-toggle" for="opt-unread">Unread</label>
-      </div>
-    </div>
-
-    <div class="conversations list-group list-group-flush"></div>
-    <section id="contacts" class="hidden">
-      <header class="contacts-header">
-        <div class="back">
-          <i class="bi bi-arrow-left pointer" id="close-contacts" style="font-size: 30px;"></i>
-          <h5>Nuevo chat</h5>
-
-        </div>
-        <div id="search-contacts" class="search-conversations">
+      <div class="filters">
+        <div id="search-conversations" class="search-conversations">
           <input type="text" class="form-control" placeholder="Search" />
           <i class="bi bi-search search-icon"></i>
         </div>
-      </header>
-      <div id="contacts-list" class="list-group list-group-flush"></div>
-    </section>
-    <section class="profileContainer hidden">
-      <h2>Profile</h2>
-      <div class="profile-img-container">
-        <img id="profile-image" src="{{url}}" alt="profile image" />
-        <label for="avatar-upload" class="edit-profile-img">
-          <i class="bi bi-pencil-square"></i>
-        </label>
-        <input id="avatar-upload" type="file" name="file" class="hidden-input" accept="image/*" />
-      </div>
-      <div class="upload-file">
-        <p id="filename-preview"></p>
-        <button id="submit-file-btn" class="btn btn-success btn-sm hidden-btn">Upload</button>
-      </div>
-      <div>
-        Name:
-        <span>{{name}}</span>
+        <div class="toggles-container">
+          <input type="radio" class="btn-check" name="options" id="opt-all" autocomplete="off" checked />
+          <label class="btn custom-toggle" for="opt-all">All</label>
+
+          <input type="radio" class="btn-check" name="options" id="opt-unread" autocomplete="off" />
+          <label class="btn custom-toggle" for="opt-unread">Unread</label>
+        </div>
       </div>
 
-      <button id="back-to-chats" class="btn btn-primary">Back to Chats</button>
-    </section>
+      <div class="conversations list-group list-group-flush"></div>
+      <section id="contacts" class="hidden">
+        <header class="contacts-header">
+          <div class="back">
+            <i class="bi bi-arrow-left pointer" id="close-contacts" style="font-size: 30px;"></i>
+            <h5>Nuevo chat</h5>
 
-  </aside>
+          </div>
+          <div id="search-contacts" class="search-conversations">
+            <input type="text" class="form-control" placeholder="Search" />
+            <i class="bi bi-search search-icon"></i>
+          </div>
+        </header>
+        <div id="contacts-list" class="list-group list-group-flush"></div>
+      </section>
+      <section class="profileContainer hidden">
+        <h2>Profile</h2>
+        <div class="profile-img-container">
+          <img id="profile-image" src="{{url}}" alt="profile image" />
+          <label for="avatar-upload" class="edit-profile-img">
+            <i class="bi bi-pencil-square"></i>
+          </label>
+          <input id="avatar-upload" type="file" name="file" class="hidden-input" accept="image/*" />
+        </div>
+        <div class="upload-file">
+          <p id="filename-preview"></p>
+          <button id="submit-file-btn" class="btn btn-success btn-sm hidden-btn">Upload</button>
+        </div>
+        <div>
+          Name:
+          <span>{{name}}</span>
+        </div>
 
-  <section class="conversation">
-    <header></header>
-    <section class="messages"></section>
-    <footer class="conversation-footer hidden">
-      {{! <i class="bi bi-plus pointer" style="font-size: 45px;"></i> }}
-      <div class="message-input">
-        <div id="emoji-picker" class="hidden"></div>
-        <button id="emoji-btn" type="button" class="btn input-emoji pointer">
-          <i class="bi bi-emoji-smile" style="font-size: 24px;"></i>
+        <button id="back-to-chats" class="btn btn-primary">Back to Chats</button>
+      </section>
+
+    </aside>
+    <section class="conversation">
+      <header></header>
+      <section class="messages"></section>
+      <footer class="conversation-footer hidden">
+        {{! <i class="bi bi-plus pointer" style="font-size: 45px;"></i> }}
+        <div class="message-input">
+          <div id="emoji-picker" class="hidden"></div>
+          <button id="emoji-btn" type="button" class="btn input-emoji pointer">
+            <i class="bi bi-emoji-smile" style="font-size: 24px;"></i>
+          </button>
+          <textarea name="newMessage" id="newMessage" class="form-control form-control-lg" type="text" placeholder="Write a message" aria-label=".form-control-lg example" rows="1"></textarea>
+        </div>
+        <button class="sendButton disabled">
+          <svg viewBox="0 0 24 24" height="24" width="24" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>wds-ic-send-filled</title><path d="M5.4 19.425C5.06667 19.5583 4.75 19.5291 4.45 19.3375C4.15 19.1458 4 18.8666 4 18.5V14L12 12L4 9.99997V5.49997C4 5.1333 4.15 4.85414 4.45 4.66247C4.75 4.4708 5.06667 4.44164 5.4 4.57497L20.8 11.075C21.2167 11.2583 21.425 11.5666 21.425 12C21.425 12.4333 21.2167 12.7416 20.8 12.925L5.4 19.425Z" fill="currentColor"></path></svg>
         </button>
-        <textarea name="newMessage" id="newMessage" class="form-control form-control-lg" type="text" placeholder="Write a message" aria-label=".form-control-lg example" rows="1"></textarea>
-      </div>
-      <button class="sendButton disabled">
-        <svg viewBox="0 0 24 24" height="24" width="24" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>wds-ic-send-filled</title><path d="M5.4 19.425C5.06667 19.5583 4.75 19.5291 4.45 19.3375C4.15 19.1458 4 18.8666 4 18.5V14L12 12L4 9.99997V5.49997C4 5.1333 4.15 4.85414 4.45 4.66247C4.75 4.4708 5.06667 4.44164 5.4 4.57497L20.8 11.075C21.2167 11.2583 21.425 11.5666 21.425 12C21.425 12.4333 21.2167 12.7416 20.8 12.925L5.4 19.425Z" fill="currentColor"></path></svg>
-      </button>
-      {{! <i class="bi bi-mic-fill pointer" style="font-size: 30px;"></i> }}
-    </footer>
-  </section>
-
+        {{! <i class="bi bi-mic-fill pointer" style="font-size: 30px;"></i> }}
+      </footer>
+    </section>
+  </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script type="module" src="/ts/home.js"></script>

@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { MessageWithId, PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
-import { allContactsSection, conversationsContainer, profileContainer } from "../home.ts";
+import { allContactsSection, conversationsContainer, profileContainer, sidebar } from "../home.ts";
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
@@ -41,8 +41,7 @@ const renderSingleMessage = (message: MessageWithId, senderId: string, target: H
   const paragraph = document.createElement("div");
   paragraph.setAttribute("data-msgId", String(message._id));
   paragraph.innerHTML = `
-
-  <p>${message.content}</p>
+  <span class="message-content">${message.content}</span>
   <span class="message-time">${message.date ? getHourFromDate(new Date(message.date)) : getHourFromDate(new Date())}
   ${message.author.toString() === senderId ? `<i class="bi bi-${message.status === "sent" ? "check2" : "check2-all"} msg-check ${message.status === "read" && "msg-read"}"></i>` : ""}
   </span>
@@ -78,7 +77,10 @@ const renderContact = (socket: Socket<ClientToServerEvents, ServerToClientEvents
   conversationDiv.setAttribute("data-conversationid", item._id.toString());
   conversationDiv.classList.add("list-group-item", "list-item", "contact");
   conversationDiv.innerHTML = getContactHtml(item, contact);
-  conversationDiv.addEventListener("click", () => socketEventsHelpers.openConversation(socket, contact));
+  conversationDiv.addEventListener("click", () => {
+    socketEventsHelpers.openConversation(socket, contact);
+    toggleShowSidebar();
+  });
   if (onTop) anchorElement.prepend(conversationDiv);
   else anchorElement.appendChild(conversationDiv);
 };
@@ -117,6 +119,10 @@ const showProfile = () => {
   profileContainer.classList.remove("hidden");
 };
 
+const toggleShowSidebar = () => {
+  sidebar.classList.toggle("collapsed");
+};
+
 export default {
   renderMessages,
   renderSingleMessage,
@@ -127,4 +133,5 @@ export default {
   addHeading,
   sortSingleConversation,
   showProfile,
+  toggleShowSidebar,
 };
