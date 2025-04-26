@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "copyFiles": "xcopy src\\public dist\\public /E /I /Y && xcopy src\\views dist\\views /E /I /Y",
-    "copyFilesProd": "cp -r src/public dist/public && cp -r src/views dist/views",
+    "copyFilesProd": "shx cp -r src/public/* dist/public && shx cp -r src/views/* dist/views",
     "build": "tsc && npm run copyFilesProd",
     "lint": "npx eslint",
     "watch": "concurrently -n \"TSC,COPY\" -c \"cyan,yellow\" \"tsc --watch\" \"npx chokidar \\\"src/public/**/*\\\" \\\"src/views/**/*\\\" -c \\\"npm run copyFiles\\\"\"",
@@ -31,6 +31,7 @@
     "eslint": "9.20.1",
     "globals": "16.0.0",
     "livereload": "0.9.3",
+    "shx": "^0.4.0",
     "ts-node": "10.9.2",
     "typescript": "5.7.3",
     "typescript-eslint": "8.24.1"
