@@ -9,6 +9,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* justify-content: center; */
   height: 100%;
 }
 .container .brand {
@@ -33,6 +34,15 @@
   align-items: center;
   padding-block: 150px;
   gap: 20px;
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+  @media (max-height: 800px) {
+    padding-block: 50px;
+  }
+  @media (max-height: 600px) {
+    padding-block: 20px;
+  }
 }
 
 .authForm h2 {

@@ -10,10 +10,10 @@
   z-index: 2;
   position: relative;
   overflow: hidden;
-  animation: sidebar-expand 0.3s ease-in-out;
   @media (max-width: 800px) {
     position: absolute;
     width: 100%;
+    animation: sidebar-expand 0.3s ease-in-out;
   }
   @media (max-width: 400px) {
     padding: 10px !important;
