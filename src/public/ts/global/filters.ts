@@ -1,5 +1,5 @@
 import { PopulatedConversationWithId, UserWithId } from "../../../types/types.js";
-import { globalState } from "../store.ts";
+import { globalState } from "../store/store.ts";
 
 export const filterConversationsByFullName = (search: string): PopulatedConversationWithId[] => {
   return globalState.conversations.filter((c) => {

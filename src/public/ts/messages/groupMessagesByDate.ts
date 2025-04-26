@@ -1,5 +1,5 @@
 import { MessageWithId } from "../../../types/types.js";
-import { setDateLabel } from "./utils.ts";
+import { setDateLabel } from "../helpers/utils.ts";
 
 type MessageGroup = {
   date: string;

@@ -1,5 +1,5 @@
 import { STATUSES } from "../../../types/enums.js";
-import { updateUser } from "../helpers/storeHandlers.ts";
+import { updateUser } from "../store/storeHandlers.ts";
 
 export const updateUserPhoto = async (body: FormData): Promise<string | null> => {
   const result = await fetch(`api/users/updateProfilePhoto`, {

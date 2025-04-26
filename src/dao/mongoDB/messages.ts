@@ -56,7 +56,7 @@ export default class MessageDAO {
     const messages = await messageModel.find({ $or: [{ status: MSG_STATUS.RECEIVED }, { status: MSG_STATUS.SENT }], author: contactId, receiver: userId }).lean<MessageWithId[]>();
     const messageIds = messages.map((msg) => msg._id);
     await messageModel.updateMany({ _id: { $in: messageIds } }, { $set: { status: MSG_STATUS.READ } });
-    const result = await conversationModel.updateMany({ participants: { $all: [userId, contactId] } }, { $set: { status: MSG_STATUS.READ, unreadMessages: 0 } });
+    await conversationModel.updateOne({ participants: { $all: [userId, contactId] }, author: { $ne: userId } }, { $set: { status: MSG_STATUS.READ, unreadMessages: 0 } });
     return { status: STATUSES.SUCCESS, payload: messages };
   }
 }

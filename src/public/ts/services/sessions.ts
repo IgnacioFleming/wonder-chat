@@ -2,7 +2,7 @@ import { PersistResult } from "../../../types/DAO.js";
 import { STATUSES } from "../../../types/enums.js";
 import { AuthUser, UserWithId } from "../../../types/types.js";
 import { errorAlert, registerAlert } from "../alerts/alerts.ts";
-import { setUser } from "../helpers/storeHandlers.ts";
+import { setUser } from "../store/storeHandlers.ts";
 
 export const logout = () => {
   fetch("/api/sessions/logout", {
