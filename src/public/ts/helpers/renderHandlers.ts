@@ -4,10 +4,9 @@ import { allContactsSection, conversationsContainer, profileContainer, sidebar }
 import { isPopulatedConversation } from "./typeGuards.ts";
 import { globalState } from "../store.ts";
 import socketEventsHelpers from "./socketEventsHelpers.ts";
-import { formatLastConnectionDate, getContactHtml, getHourFromDate, setDateLabel } from "./utils.ts";
+import { formatLastConnectionDate, getContactHtml, getHourFromDate } from "./utils.ts";
 import { groupMessagesByDate } from "./groupMessagesByDate.ts";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../types/websockets.js";
-import { handleSubmitFile } from "./domHandlers.ts";
 
 const addHeading = (text: string, target: HTMLElement) => {
   const heading = document.createElement("h6");
