@@ -1,7 +1,7 @@
 import multer from "multer";
 import { __dirname } from "../utils/utils.ts";
 
-const rootDir = __dirname + "/src/public";
+const rootDir = __dirname + "/dist/public";
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, rootDir + "/profile/uploads");
