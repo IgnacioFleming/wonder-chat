@@ -16,6 +16,9 @@
   color: var(--white);
   text-align: center;
   margin-block: 50px;
+  @media (max-height: 800px) {
+    margin-block: 25px;
+  }
 }
 
 .container > div {
