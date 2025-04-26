@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "dist", "public")));
 
 app.get("/debug-uploads", (req, res) => {
-  const uploadsPath = path.join(__dirname, "public/profile/uploads");
+  const uploadsPath = path.join(__dirname, "dist/public/profile/uploads");
   fs.readdir(uploadsPath, (err, files) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ files });
