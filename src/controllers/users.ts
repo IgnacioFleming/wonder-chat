@@ -41,7 +41,6 @@ export default class UserController {
     if (!newFile) return responses.errorResponse(res, "No file uploaded");
     if (user.photo) {
       const oldPath = __dirname + "/src/public" + user.photo;
-      console.log(user.photo);
       fs.unlink(oldPath, (err) => {
         if (err && err.code !== "ENOENT") console.log("Error deleting old avatar: ", err);
       });

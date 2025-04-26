@@ -30,7 +30,7 @@ export const isToday = (date: Date): boolean => {
 
 export const getContactHtml = (item: UserWithId | PopulatedConversationWithId, contact: UserWithId) => {
   let html = `
-  <img class="avatar" src="${contact.photo || "/images/avatar1.webp"}" alt="profile avatar" />
+  <img class="avatar" src="${contact.photo || "/profile/uploads/avatar1.webp"}" alt="profile avatar" />
   <div>
   <div class="conversation-first-line" style='${isPopulatedConversation(item) ? "" : "height:100%;"}'>
   <h3 class="conversation-name">${contact.full_name}</h3>

@@ -28,7 +28,6 @@ app.use(express.static(path.join(__dirname, "dist", "public")));
 
 app.get("/debug-public", (req, res) => {
   const publicPath = path.join(__dirname, "dist", "public");
-  console.log("public path", publicPath);
   const files = fs.readdirSync(publicPath, { withFileTypes: true }).map((f) => f.name);
   res.json({ path: publicPath, files });
 });

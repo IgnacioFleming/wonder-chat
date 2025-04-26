@@ -57,7 +57,7 @@ const renderConversationHeader = ({ full_name, photo, is_online, last_connection
   headerSection.classList.add("hasMessages");
   headerSection.innerHTML = `
      <div class="list-item">
-        <img class="avatar" src="${photo || "/images/avatar1.webp"}" alt="photo" />
+        <img class="avatar" src="${photo || "/profile/uploads/avatar1.webp"}" alt="photo" />
         <p>${full_name}
         <small id="last_connection_label">${is_online ? "online" : formatLastConnectionDate({ is_online: false, last_connection })}</small>
         </p>
