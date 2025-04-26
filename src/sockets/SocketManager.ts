@@ -23,7 +23,7 @@ export default class SocketManager {
         userSocketMap.set(userId, socket.id);
         const result = await UserDAO.updateLastConnection(userId, "online");
         socket.broadcast.emit("notifyConnection", result.payload);
-        console.log(`User ${userId} conectado con socket ${socket.id}`);
+        // console.log(`User ${userId} conectado con socket ${socket.id}`);
       });
       messagesHandler(socket, this.socketServer);
       conversationsHandler(socket);

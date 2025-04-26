@@ -152,8 +152,8 @@ sendButton.addEventListener("click", (e) => {
 });
 newMessageBtn.addEventListener("click", async () => {
   if (!globalState.user?._id) return;
-  const contacts = await getContacts(globalState.user?._id);
   allContactsSection.classList.replace("hidden", "block");
+  const contacts = await getContacts(globalState.user?._id);
   if (!contacts || contacts?.length <= 0) return;
   globalState.contacts = [...contacts];
   renderHandlers.renderListOfContacts(socket, contactsList, contacts);

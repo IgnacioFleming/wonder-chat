@@ -26,12 +26,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "dist", "public")));
 
-app.get("/debug-public", (req, res) => {
-  const publicPath = path.join(__dirname, "dist", "public");
-  const files = fs.readdirSync(publicPath, { withFileTypes: true }).map((f) => f.name);
-  res.json({ path: publicPath, files });
-});
-
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/dist/views");
