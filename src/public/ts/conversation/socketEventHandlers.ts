@@ -29,15 +29,11 @@ const openConversation = (socket: Socket<ServerToClientEvents, ClientToServerEve
     socket.emit("updateMessagesToRead", { userId, contactId: contact._id });
     return;
   });
-  window.addEventListener(
-    "keydown",
-    (e) => {
-      if (e.key !== "Escape") return;
-      renderings.closeCurrentConversation();
-      deleteSelectedContact();
-    },
-    { once: true }
-  );
+  window.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || !globalState.selectedContact.contact) return;
+    renderings.closeCurrentConversation();
+    deleteSelectedContact();
+  });
 };
 
 export default {

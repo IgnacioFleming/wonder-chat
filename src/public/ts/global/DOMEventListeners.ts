@@ -11,11 +11,13 @@ import { filterUnreadConversations } from "./filters.ts";
 import { logout } from "../services/sessions.ts";
 import { showProfile } from "../profile/renderings.ts";
 
-export const initializeDOMEventListeners = () => {
+export const inizializeMessageInputEventListeners = () => {
+  console.log("agrego los listeners");
   DOMElements.newMessageInput.addEventListener("keydown", (e) => {
     sendMessage(e, socket, DOMElements.newMessageInput);
     resizeMessageInput();
   });
+
   DOMElements.newMessageInput.addEventListener("input", () => {
     if (DOMElements.newMessageInput.value.length > 0) DOMElements.sendButton.classList.remove("disabled");
     else DOMElements.sendButton.classList.add("disabled");
@@ -33,15 +35,20 @@ export const initializeDOMEventListeners = () => {
     globalState.contacts = [...contacts];
     sidebarRenderings.renderListOfContacts(socket, DOMElements.contactsList, contacts);
   });
-
-  DOMElements.closeContactsBtn.addEventListener("click", sidebarRenderings.closeContactsList);
   DOMElements.emojiBtn.addEventListener("click", () => {
+    console.log("entro aca");
     DOMElements.emojiPicker.classList.toggle("scaleOut");
     setTimeout(() => {
       DOMElements.emojiPicker.classList.toggle("hidden");
       DOMElements.emojiPicker.classList.toggle("scaleOut");
     }, 190);
   });
+};
+
+export const initializeDOMEventListeners = () => {
+  inizializeMessageInputEventListeners();
+
+  DOMElements.closeContactsBtn.addEventListener("click", sidebarRenderings.closeContactsList);
 
   DOMElements.searchConversations.addEventListener("keyup", debounce(searchHandler(socket, DOMElements.conversationsContainer, "conversations"), 500));
   DOMElements.searchContacts.addEventListener("keyup", debounce(searchHandler(socket, DOMElements.contactsList, "contacts"), 500));

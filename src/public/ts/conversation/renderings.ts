@@ -1,5 +1,6 @@
 import { UserWithId } from "../../../types/types.js";
-import { formatLastConnectionDate, initialConversationHtml } from "./utils.ts";
+import DOMElements from "../global/DOMElements.ts";
+import { formatLastConnectionDate } from "./utils.ts";
 
 const renderConversationHeader = ({ full_name, photo, is_online, last_connection }: Omit<UserWithId, "password">) => {
   const headerSection = document.querySelector(".conversation header") as HTMLElement;
@@ -15,8 +16,14 @@ const renderConversationHeader = ({ full_name, photo, is_online, last_connection
 };
 
 const closeCurrentConversation = () => {
-  const conversationContainer = document.querySelector(".mainContainer .relative-container .conversation") as HTMLElement;
-  conversationContainer.innerHTML = initialConversationHtml;
+  const conversationHeader = document.querySelector(".mainContainer .relative-container .conversation header") as HTMLElement;
+  conversationHeader.innerHTML = "";
+  DOMElements.messagesSection.innerHTML = "";
+  const conversationFooter = document.querySelector(".conversation .conversation-footer") as HTMLElement;
+  conversationFooter.classList.remove("visible");
+  conversationFooter.classList.add("hidden");
+  DOMElements.newMessageInput.value = "";
+  DOMElements.emojiPicker.classList.add("hidden");
 };
 
 const setConversationFooterVisible = () => {
