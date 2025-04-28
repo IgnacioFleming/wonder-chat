@@ -12,7 +12,6 @@ import { logout } from "../services/sessions.ts";
 import { showProfile } from "../profile/renderings.ts";
 
 export const inizializeMessageInputEventListeners = () => {
-  console.log("agrego los listeners");
   DOMElements.newMessageInput.addEventListener("keydown", (e) => {
     sendMessage(e, socket, DOMElements.newMessageInput);
     resizeMessageInput();
@@ -36,7 +35,6 @@ export const inizializeMessageInputEventListeners = () => {
     sidebarRenderings.renderListOfContacts(socket, DOMElements.contactsList, contacts);
   });
   DOMElements.emojiBtn.addEventListener("click", () => {
-    console.log("entro aca");
     DOMElements.emojiPicker.classList.toggle("scaleOut");
     setTimeout(() => {
       DOMElements.emojiPicker.classList.toggle("hidden");
