@@ -4,8 +4,9 @@ import { isPopulatedConversation } from "../helpers/typeGuards.ts";
 import { getHourFromDate, setDateLabel } from "../helpers/utils.ts";
 
 export const getContactHtml = (item: UserWithId | PopulatedConversationWithId, contact: UserWithId) => {
+  const fallbackPhoto = "/profile/uploads/avatar1.webp";
   let html = `
-    <img class="avatar" src="${contact.photo || "/profile/uploads/avatar1.webp"}" alt="profile avatar" />
+    <img class="avatar" src="${contact.photo || fallbackPhoto}" onerror="this.error='${fallbackPhoto}'" alt="profile avatar" />
     <div>
     <div class="conversation-first-line" style='${isPopulatedConversation(item) ? "" : "height:100%;"}'>
     <h3 class="conversation-name">${contact.full_name}</h3>

@@ -3,11 +3,12 @@ import DOMElements from "../global/DOMElements.ts";
 import { formatLastConnectionDate } from "./utils.ts";
 
 const renderConversationHeader = ({ full_name, photo, is_online, last_connection }: Omit<UserWithId, "password">) => {
+  const fallbackPhoto = "/profile/uploads/avatar1.webp";
   const headerSection = document.querySelector(".conversation header") as HTMLElement;
   headerSection.classList.add("hasMessages");
   headerSection.innerHTML = `
      <div class="list-item">
-        <img class="avatar" src="${photo || "/profile/uploads/avatar1.webp"}" alt="photo" />
+        <img class="avatar" src="${photo || fallbackPhoto}" onerror="this.src='${fallbackPhoto}'" alt="photo" />
         <p>${full_name}
         <small id="last_connection_label">${is_online ? "online" : formatLastConnectionDate({ is_online: false, last_connection })}</small>
         </p>
