@@ -25,9 +25,13 @@ export const authenticate = (userEntries: AuthUser) => {
     body: JSON.stringify(userEntries),
   })
     .then((res) => {
+      if (location.pathname === "/login" && !res.ok) {
+        return errorAlert("Invalid credentials");
+      }
       return res.json();
     })
     .then((json: PersistResult<Omit<UserWithId, "password">>) => {
+      if (!json) return;
       if (location.pathname === "/register") {
         if (json.status === STATUSES.SUCCESS) {
           return registerAlert(successMessage);
