@@ -1,67 +1,67 @@
 # 🌐 WonderChat
 
-Bienvenido a **WonderChat**, un clon de WhatsApp Web desarrollado con tecnologias modernas de backend y frontend.
+Welcome to **WonderChat**, a WhatsApp Web clone developed with modern backend and frontend technologies.
 
 ---
 
-## 📊 Tecnologias utilizadas
+## 📊 Technologies Used
 
 - **Backend**: Node.js + Express.js + TypeScript
-- **Frontend**: HTML, CSS, JavaScript Vanilla, Bootstrap 5
+- **Frontend**: HTML, CSS, Vanilla TypeScript, Bootstrap 5
 - **WebSockets**: Socket.IO
-- **Base de datos**: MongoDB Atlas
-- **Autenticacion**: Passport.js (estrategia local + manejo de sesiones)
-- **Subida de archivos**: Multer (almacenamiento de fotos de perfil en el servidor)
-- **Deploy**: Railway
+- **Database**: MongoDB Atlas
+- **Authentication**: Passport.js (local strategy + session management)
+- **File Uploads**: Multer (profile picture storage on server)
+- **Deployment**: Railway
 
 ---
 
-## 🎓 Caracteristicas principales
+## 🎓 Main Features
 
-- Registro y login de usuarios.
-- Gestion de sesiones seguras con cookies.
-- Subida de imagen de perfil.
-- Envio y recepcion de mensajes en tiempo real via WebSockets.
-- Estado de los mensajes: enviado, recibido y leido.
-- Buscador de conversaciones en tiempo real (debounce incluido).
-- Creacion automatica de conversaciones.
-- Actualizacion de ultimos mensajes y orden dinamico de conversaciones.
-- Diseño responsive (mobile-friendly).
+- User registration and login.
+- Secure session management with cookies.
+- Profile picture upload.
+- Real-time message sending and receiving via WebSockets.
+- Message status: sent, received, and read.
+- Real-time conversation search (with debounce).
+- Automatic conversation creation.
+- Dynamic update of last messages and conversation ordering.
+- Responsive design (mobile-friendly).
 
 ---
 
-## 🔄 Como correrlo localmente
+## 🔄 How to Run Locally
 
-1. Clonar el repositorio:
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/tuusuario/wonderchat.git
+git clone https://github.com/yourusername/wonderchat.git
 cd wonderchat
 ```
 
-2. Instalar dependencias:
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Configurar variables de entorno:
+3. Configure environment variables:
 
-Crear un archivo `.env` en la raiz y completar:
+Create a `.env` file at the root and fill in:
 
 ```env
-MONGO_URL=tu_string_de_conexion
-SECRET=una_clave_secreta_para_cookies
+MONGO_URL=your_mongodb_connection_string
+SECRET=a_secret_key_for_cookies
 PORT=8080
 ```
 
-4. Compilar y levantar el servidor en modo desarrollo:
+4. Compile and start the server in development mode:
 
 ```bash
 npm run dev
 ```
 
-5. Acceder en tu navegador a:
+5. Access in your browser at:
 
 ```
 http://localhost:8080
@@ -69,35 +69,34 @@ http://localhost:8080
 
 ---
 
-## 💡 Detalles adicionales
+## 💡 Additional Details
 
-- Los archivos estaticos se sirven desde la carpeta `public`.
-- El servidor transpila el TypeScript al iniciar (`dist/` generado automaticamente).
-- La app tiene live reload para desarrollo (cambios en archivos reflejados al instante).
-- Para produccion se realiza el build completo antes del deploy.
-
----
-
-## 🚀 Mejoras futuras (roadmap)
-
-- Subida de imagenes a un proveedor en la nube (Cloudinary).
-- Encriptado de contraseñas (bcrypt).
-- Mensajes multimedia.
-- Notificaciones push.
+- Static files are served from the `public` folder.
+- The server transpiles TypeScript on startup (auto-generates `dist/`).
+- The app includes live reload for development (instant file change reflection).
+- For production, a full build is completed before deployment.
 
 ---
 
-## ✨ Demo online
+## 🚀 Future Improvements (Roadmap)
 
-[**Probar WonderChat en Railway**](https://wonderchat-production.up.railway.app/)
-
----
-
-## 👤 Autor
-
-**Julieta Micucci**\
-[LinkedIn](https://www.linkedin.com/in/tuusuario/) | [GitHub](https://github.com/tuusuario/)
+- Upload images to disk (`public/profile/uploads`).
+- Password encryption (bcrypt).
+- Multimedia messages.
 
 ---
 
-**Gracias por visitar el proyecto!** 🚀✨
+## ✨ Live Demo
+
+[**Try WonderChat on Railway**](https://wonder-chat-production.up.railway.app/)
+
+---
+
+## 👤 Author
+
+**Ignacio Fleming**\
+[LinkedIn](https://www.linkedin.com/in/ignacio-fleming-1b5a18114/) | [GitHub](https://github.com/IgnacioFleming/)
+
+---
+
+**Thanks for checking out the project!** 🚀✨
