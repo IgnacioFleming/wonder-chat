@@ -1,27 +1,103 @@
-# WONDERCHAT
+# 🌐 WonderChat
 
-- Al entrar al chat:
+Bienvenido a **WonderChat**, un clon de WhatsApp Web desarrollado con tecnologias modernas de backend y frontend.
 
-1# Veo todas mis conversaciones - [x]
+---
 
-2# Tengo que ver el ultimo mensaje en cada conversacion - [x]
+## 📊 Tecnologias utilizadas
 
-3# Tengo filtros para ver las conversaciones: Todas, No leidas, Favoritas - []
+- **Backend**: Node.js + Express.js + TypeScript
+- **Frontend**: HTML, CSS, JavaScript Vanilla, Bootstrap 5
+- **WebSockets**: Socket.IO
+- **Base de datos**: MongoDB Atlas
+- **Autenticacion**: Passport.js (estrategia local + manejo de sesiones)
+- **Subida de archivos**: Multer (almacenamiento de fotos de perfil en el servidor)
+- **Deploy**: Railway
 
-4# Tengo que poder hacer una busqueda de texto para filtrar conversaciones - []
+---
 
-5# Si un usuario crea un mensaje poniendome a mí como receiver, me tiene que llegar el mensaje como no leído - []
+## 🎓 Caracteristicas principales
 
-- Al presionar nuevo mensaje:
+- Registro y login de usuarios.
+- Gestion de sesiones seguras con cookies.
+- Subida de imagen de perfil.
+- Envio y recepcion de mensajes en tiempo real via WebSockets.
+- Estado de los mensajes: enviado, recibido y leido.
+- Buscador de conversaciones en tiempo real (debounce incluido).
+- Creacion automatica de conversaciones.
+- Actualizacion de ultimos mensajes y orden dinamico de conversaciones.
+- Diseño responsive (mobile-friendly).
 
-1# Veo todos los usuarios disponibles para conversar - [x]
+---
 
-2# Al enviar o recibir un nuevo mensaje debo reemplazar el ultimo mensaje de la conversación - [x]
+## 🔄 Como correrlo localmente
 
-- Al entrar en una conversacion:
+1. Clonar el repositorio:
 
-1# Veo todos los mensajes, tanto los que envie yo como los que me envió el usuario de la conversación - [x]
+```bash
+git clone https://github.com/tuusuario/wonderchat.git
+cd wonderchat
+```
 
-2# Debo poder enviar un nuevo mensaje - [x]
+2. Instalar dependencias:
 
-3# Al entrar en la conversación los mensajes se marcan como leídos - [x]
+```bash
+npm install
+```
+
+3. Configurar variables de entorno:
+
+Crear un archivo `.env` en la raiz y completar:
+
+```env
+MONGO_URL=tu_string_de_conexion
+SECRET=una_clave_secreta_para_cookies
+PORT=8080
+```
+
+4. Compilar y levantar el servidor en modo desarrollo:
+
+```bash
+npm run dev
+```
+
+5. Acceder en tu navegador a:
+
+```
+http://localhost:8080
+```
+
+---
+
+## 💡 Detalles adicionales
+
+- Los archivos estaticos se sirven desde la carpeta `public`.
+- El servidor transpila el TypeScript al iniciar (`dist/` generado automaticamente).
+- La app tiene live reload para desarrollo (cambios en archivos reflejados al instante).
+- Para produccion se realiza el build completo antes del deploy.
+
+---
+
+## 🚀 Mejoras futuras (roadmap)
+
+- Subida de imagenes a un proveedor en la nube (Cloudinary).
+- Encriptado de contraseñas (bcrypt).
+- Mensajes multimedia.
+- Notificaciones push.
+
+---
+
+## ✨ Demo online
+
+[**Probar WonderChat en Railway**](https://wonderchat-production.up.railway.app/)
+
+---
+
+## 👤 Autor
+
+**Julieta Micucci**\
+[LinkedIn](https://www.linkedin.com/in/tuusuario/) | [GitHub](https://github.com/tuusuario/)
+
+---
+
+**Gracias por visitar el proyecto!** 🚀✨
