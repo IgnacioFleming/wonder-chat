@@ -23,11 +23,12 @@ export default class SocketManager {
         userSocketMap.set(userId, socket.id);
         const result = await UserDAO.updateLastConnection(userId, "online");
         socket.broadcast.emit("notifyConnection", result.payload);
-        // console.log(`User ${userId} conectado con socket ${socket.id}`);
+        console.log(`User ${userId} connected with socket ${socket.id}`);
       });
       messagesHandler(socket, this.socketServer);
       conversationsHandler(socket);
       socket.on("disconnect", async () => {
+        console.log(`Socket ${socket.id} disconnected`);
         for (const [userId, id] of userSocketMap.entries()) {
           if (id === socket.id) {
             const result = await UserDAO.updateLastConnection(userId, "offline");
