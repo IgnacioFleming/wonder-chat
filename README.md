@@ -35,7 +35,7 @@ Welcome to **WonderChat**, a WhatsApp Web clone developed with modern backend an
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/wonderchat.git
+git clone https://github.com/IgnacioFleming/wonderchat.git
 cd wonderchat
 ```
 
