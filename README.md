@@ -81,6 +81,26 @@ http://localhost:8080
 
 ---
 
+## 📂 Project Structure
+
+```bash
+src/
+├── auth/           # Authentication for routes with passport
+├── config/         # Global config (env, livereload for dev enviroment, express session with MongoDB)
+├── controllers/    # Business logic for each entity
+├── dao/            # Database models (with MongoDB)
+├── middleware/     # Custom Express middlewares
+├── mocks/          # Mocked data generation for tests
+├── public/         # Static files and Frontend logic (Vanilla Typescript)
+├── routes/         # API routes
+├── schemas/        # For data validation with Zod
+├── sockets/        # Websockets services for Conversations and Messages handling (socket.io)
+├── types/          # Global types and enums
+├── utils/          # Utility functions
+├── views/          # Html templates for the user interface powered by handlebars
+└── index.jsx       # Application entry point
+```
+
 ## ✨ Live Demo
 
 [**Try WonderChat on Railway**](https://wonder-chat-production.up.railway.app/)
