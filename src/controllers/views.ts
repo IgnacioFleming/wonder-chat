@@ -8,6 +8,9 @@ export default class ViewsController {
   static login: Middleware = async (req, res, next) => {
     res.render("login", { style: "auth.css" });
   };
+  static demoLogin: Middleware = async (req, res, next) => {
+    res.render("demo-login", { style: "auth.css" });
+  };
   static register: Middleware = async (req, res, next) => {
     res.render("register", { style: "auth.css" });
   };

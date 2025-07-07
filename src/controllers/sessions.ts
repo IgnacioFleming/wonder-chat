@@ -19,4 +19,9 @@ export default class SessionsController {
         return responses.successResponse(res, "User logged out");
       });
   };
+
+  static demoLogin: Middleware = async (req, res, next) => {
+    const user = new UserDTO(req.user as UserWithId);
+    responses.successResponse(res, user);
+  };
 }

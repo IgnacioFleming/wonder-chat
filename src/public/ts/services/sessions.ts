@@ -9,14 +9,15 @@ export const logout = () => {
     method: "POST",
   })
     .then((res) => res.json())
-    .then(({ status }) => status === STATUSES.SUCCESS && (window.location.href = "/login"))
+    .then(({ status }) => status === STATUSES.SUCCESS && (window.location.href = "/demo-login"))
     .catch((err) => console.log(err));
 };
 
 export const authenticate = (userEntries: AuthUser) => {
   const path = location.pathname;
+  if (!userEntries.password) userEntries.password = "123";
   const successMessage = location.pathname === "/register" ? "User registered successfully, please click bellow to go to Login" : "User logged successfully";
-  const errorMessage = location.pathname === "/register" ? "Error during registration, please try again" : "Login failed, please try again";
+  const errorMessage = location.pathname === "/demo-login" ? "This name is already taken, please try another" : location.pathname === "/register" ? "Error during registration, please try again" : "Login failed, please try again";
   fetch(`/api/sessions${path}`, {
     method: "POST",
     headers: {
@@ -38,11 +39,10 @@ export const authenticate = (userEntries: AuthUser) => {
         }
         return errorAlert(errorMessage);
       }
-      if (location.pathname === "/login") {
-        if (json.status !== STATUSES.SUCCESS) return alert(errorAlert);
-        setUser(json.payload);
-        return (location.href = "/");
-      }
+
+      if (json.status !== STATUSES.SUCCESS) return alert(errorAlert);
+      setUser(json.payload);
+      return (location.href = "/");
     })
     .catch((err) => console.log(err));
 };

@@ -6,4 +6,5 @@ export const enum STATUSES {
 export const enum STRATEGIES {
   REGISTER = "register",
   LOGIN = "login",
+  DEMO_LOGIN = "demo-login",
 }

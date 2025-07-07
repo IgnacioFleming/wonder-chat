@@ -20,6 +20,24 @@ export const initializePassport = () => {
       }
     })
   );
+
+  passport.use(
+    STRATEGIES.DEMO_LOGIN,
+    new LocalStrategy({ usernameField: "full_name" }, async (username, password, done) => {
+      try {
+        const result = await UserDAO.getbyFullName(username);
+        if (result.status === STATUSES.SUCCESS) return done(null, result.payload);
+        const demoPwd = "123";
+        const createDemoUser = await UserDAO.create({ full_name: username, password: demoPwd });
+        if (createDemoUser.status === STATUSES.ERROR) return done(createDemoUser.error);
+        const demoUser = await UserDAO.getbyFullName(username);
+        return done(null, demoUser.payload);
+      } catch (error) {
+        done(error);
+      }
+    })
+  );
+
   passport.use(
     STRATEGIES.LOGIN,
     new LocalStrategy({ usernameField: "full_name" }, async (username, password, done) => {
