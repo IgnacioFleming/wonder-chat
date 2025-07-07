@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-if (!globalState.user || !globalState.user._id) window.location.href = "/login";
+if (!globalState.user || !globalState.user._id) window.location.href = "/demo-login";
 export const socket = window.io();
 
 initializeEmojis();

@@ -10,7 +10,7 @@ export const registerAlert = (text: string) => {
     icon: "success",
     text,
     confirmButtonText: "OK",
-  }).then(() => (location.href = "/login"));
+  }).then(() => (location.href = "/demo-login"));
 };
 
 export const errorAlert = (text: string) => {

@@ -10,7 +10,7 @@ const errorResponse: Response = (res, error) => {
 };
 
 const unauthorizedResponse: Response = (res) => {
-  res.redirect("/login");
+  res.redirect("/demo-login");
 };
 
 export default { successResponse, errorResponse, unauthorizedResponse };
